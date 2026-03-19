@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRC 회식 맛집 추천</title>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f0e17;--card:#1a1826;--card2:#221f33;--border:#2e2a45;--accent:#ff6b6b;--y:#ffd93d;--g:#6bcb77;--text:#fffffe;--muted:#a7a3be;--r:16px}
+body{font-family:'Pretendard',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(255,107,107,.06) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 80% 80%,rgba(77,150,255,.05) 0%,transparent 60%);pointer-events:none}
+header{position:relative;z-index:10;padding:28px 32px 0;text-align:center}
+.logo-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(255,107,107,.12);border:1px solid rgba(255,107,107,.3);border-radius:100px;padding:6px 16px;font-size:12px;font-weight:600;color:var(--accent);letter-spacing:1px;margin-bottom:18px}
+h1{font-size:clamp(28px,5vw,52px);font-weight:800;line-height:1.15;letter-spacing:-1.5px;margin-bottom:10px;color:#fff}
+.sub{color:var(--muted);font-size:15px;margin-bottom:14px}
+.dbadge{display:inline-flex;align-items:center;gap:6px;background:rgba(3,199,90,.08);border:1px solid rgba(3,199,90,.2);border-radius:100px;padding:5px 14px;font-size:11px;font-weight:700;color:#03c75a;margin-bottom:36px}
+.slabel{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;text-align:center}
+
+/* PEOPLE */
+.psec{position:relative;z-index:5;max-width:800px;margin:0 auto 16px;padding:0 20px}
+.pgrid{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.pbtn{display:flex;flex-direction:column;align-items:center;gap:3px;background:#fff;border:2px solid #ddd;border-radius:14px;padding:12px 16px;cursor:pointer;transition:all .2s;min-width:82px;color:#222}
+.pbtn .pe{font-size:20px}.pbtn .pc{font-size:13px;font-weight:800;color:#222}.pbtn .ps{font-size:10px;color:#999}
+.pbtn:hover{border-color:var(--accent);background:#fff5f5;transform:translateY(-2px)}
+.pbtn.act{border-color:var(--accent);background:#fff0f0;box-shadow:0 0 0 3px rgba(255,107,107,.2)}
+.pbtn.act .pc{color:var(--accent)}
+.pbtn.big{background:linear-gradient(135deg,#fff9f0,#fff);border-color:#ffc87a}
+.pbtn.big:hover{border-color:#e67e00}
+.pbtn.big.act{border-color:#e67e00;background:#fff5e0;box-shadow:0 0 0 3px rgba(230,126,0,.2)}
+.pbtn.big.act .pc{color:#e67e00}
+.pind{text-align:center;font-size:13px;color:var(--muted);margin-top:10px;height:20px}
+.pind.on{color:var(--accent);font-weight:600}
+.pnotice{display:none;max-width:560px;margin:0 auto 20px;padding:0 20px}
+.pnotice.show{display:block}
+.pni{background:linear-gradient(135deg,rgba(255,165,0,.1),rgba(255,107,107,.06));border:1px solid rgba(255,165,0,.28);border-radius:12px;padding:12px 16px;font-size:13px;color:#cc7700;text-align:center;line-height:1.6}
+
+/* THEME */
+.tsec{position:relative;z-index:5;max-width:860px;margin:0 auto 32px;padding:0 20px}
+.tgrid{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.tbtn{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid #ddd;border-radius:100px;padding:10px 20px;cursor:pointer;transition:all .2s;font-size:14px;font-weight:700;color:#222}
+.tbtn:hover{transform:translateY(-2px)}
+.tbtn[data-t="돼지구이"]{--tc:#ff6b6b}.tbtn[data-t="족발·보쌈"]{--tc:#a855f7}.tbtn[data-t="소고기"]{--tc:#f59e0b}
+.tbtn[data-t="회·해산물"]{--tc:#3b82f6}.tbtn[data-t="치킨"]{--tc:#f97316}.tbtn[data-t="이자카야"]{--tc:#8b5cf6}
+.tbtn[data-t="중식"]{--tc:#ec4899}.tbtn[data-t="양꼬치"]{--tc:#10b981}
+.tbtn:hover{border-color:var(--tc,#999);background:rgba(0,0,0,.02)}
+.tbtn.act{border-color:var(--tc,#999);background:color-mix(in srgb,var(--tc,#aaa) 10%,#fff)}
+.tbtn.act .tl{color:var(--tc,#333)}
+.te{font-size:20px}.tl{font-size:14px;font-weight:700}
+
+/* RANDOM BTN */
+.tbtn[data-t="🎲랜덤"]{--tc:#f0a500}
+.tbtn.random-btn{background:linear-gradient(135deg,#1a1826,#221f33);border:2px dashed #f0a500;color:#f0a500;position:relative;overflow:hidden}
+.tbtn.random-btn .te{animation:spin 3s linear infinite}
+.tbtn.random-btn:hover{background:linear-gradient(135deg,#221f33,#2a2440);border-color:#ffcc44;transform:translateY(-2px) scale(1.04)}
+.tbtn.random-btn.act{border-color:#f0a500;background:linear-gradient(135deg,rgba(240,165,0,.18),rgba(240,165,0,.08));box-shadow:0 0 0 3px rgba(240,165,0,.25)}
+.tbtn.random-btn.act .tl{color:#f0a500}
+@keyframes spin{0%,100%{transform:rotate(0deg)}25%{transform:rotate(-15deg)}75%{transform:rotate(15deg)}}
+
+/* RANDOM RESULT SECTION */
+.rand-sec{position:relative;z-index:5;max-width:900px;margin:0 auto;padding:0 20px 60px;display:none}
+.rand-sec.show{display:block}
+.rand-header{text-align:center;margin-bottom:28px}
+.rand-title{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px}
+.rand-sub{font-size:13px;color:var(--muted)}
+.rand-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(240,165,0,.12);border:1px solid rgba(240,165,0,.3);border-radius:100px;padding:5px 16px;font-size:12px;font-weight:700;color:#f0a500;margin-bottom:16px}
+.reshuffle-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#f0a500,#ff8c42);border:none;border-radius:100px;padding:12px 28px;font-size:14px;font-weight:800;color:#fff;cursor:pointer;transition:all .2s;box-shadow:0 6px 20px rgba(240,165,0,.35);margin-top:8px}
+.reshuffle-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(240,165,0,.45)}
+.rand-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:20px}
+.rand-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:all .2s;animation:randIn .4s ease both}
+.rand-card:hover{transform:translateY(-3px);border-color:rgba(240,165,0,.4);box-shadow:0 12px 32px rgba(0,0,0,.4)}
+.rand-num{position:absolute;top:12px;left:12px;width:24px;height:24px;background:linear-gradient(135deg,#f0a500,#ff8c42);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff}
+.rand-card-inner{position:relative;padding:18px}
+@keyframes randIn{from{transform:translateY(20px) scale(.95);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+
+/* LOC */
+.lsec{position:relative;z-index:5;max-width:520px;margin:0 auto 36px;padding:0 20px}
+.lgrid{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.lbtn{flex:1;min-width:100px;background:#fff;border:2px solid #ddd;border-radius:100px;padding:10px 20px;cursor:pointer;font-size:14px;font-weight:700;transition:all .18s;text-align:center;color:#333}
+.lbtn:hover{border-color:var(--g);background:rgba(107,203,119,.06)}
+.lbtn.act{border-color:#1a7a30;background:rgba(107,203,119,.12);color:#1a7a30}
+
+/* CTA */
+.cta{position:relative;z-index:5;text-align:center;margin-bottom:48px}
+.bfind{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--accent),#ff8e53);border:none;border-radius:100px;padding:16px 40px;font-size:16px;font-weight:800;color:#fff;cursor:pointer;transition:all .2s;box-shadow:0 8px 30px rgba(255,107,107,.35)}
+.bfind:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(255,107,107,.45)}
+
+/* RESULTS */
+.rsec{position:relative;z-index:5;max-width:1040px;margin:0 auto;padding:0 20px 80px}
+.rh{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.rt{font-size:18px;font-weight:800;letter-spacing:-.5px}
+.rm{display:flex;align-items:center;gap:8px}
+.nb{display:inline-flex;align-items:center;gap:5px;background:rgba(3,199,90,.1);border:1px solid rgba(3,199,90,.25);border-radius:100px;padding:4px 12px;font-size:11px;font-weight:700;color:#03c75a}
+.cb{background:var(--card2);border:1px solid var(--border);border-radius:100px;padding:4px 14px;font-size:13px;font-weight:600;color:var(--muted)}
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.rc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:all .2s;color:var(--text);animation:fu .3s ease both}
+.rc:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.15);box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.rc.bigc{border-color:rgba(255,165,0,.25);background:linear-gradient(145deg,#1e1b10,#1a1826)}
+.rtop{padding:18px 18px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.rtag{display:inline-flex;align-items:center;gap:4px;border-radius:100px;padding:2px 9px;font-size:11px;font-weight:700;margin-bottom:5px}
+.captag{display:inline-flex;align-items:center;gap:3px;background:rgba(255,165,0,.1);border:1px solid rgba(255,165,0,.25);border-radius:6px;padding:2px 7px;font-size:10px;font-weight:700;color:#cc7700;margin-bottom:6px}
+.rname{font-size:15px;font-weight:800;letter-spacing:-.4px;margin-bottom:5px;line-height:1.3}
+.rmeta{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);margin-bottom:10px;flex-wrap:wrap}
+.rn{color:#03c75a;font-size:10px;font-weight:800;background:rgba(3,199,90,.12);border-radius:4px;padding:1px 5px}
+.rstar{color:var(--y);font-weight:700}
+.rdot{color:var(--border)}
+.rbadge{display:inline-flex;align-items:center;gap:3px;background:rgba(255,107,107,.15);border:1px solid rgba(255,107,107,.3);border-radius:8px;padding:3px 8px;font-size:11px;font-weight:700;color:var(--accent);flex-shrink:0;white-space:nowrap}
+.rbadge.gold{background:rgba(255,165,0,.15);border-color:rgba(255,165,0,.35);color:#cc7700}
+.rdesc{font-size:12px;color:var(--muted);line-height:1.55;padding:12px 18px 14px;border-top:1px solid var(--border)}
+.rfoot{padding:10px 18px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}
+.rhours{font-size:11px;color:var(--muted);flex:1;min-width:120px}
+.rlinks{display:flex;gap:5px}
+.rmb{display:flex;align-items:center;gap:3px;border:1px solid var(--border);border-radius:7px;padding:4px 8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;text-decoration:none;white-space:nowrap}
+.rmb.nv{background:rgba(3,199,90,.08);border-color:rgba(3,199,90,.25);color:#03c75a}
+.rmb.kk{background:rgba(255,220,0,.08);border-color:rgba(255,198,0,.3);color:#996b00}
+.rmb:hover{opacity:.8}
+.empty{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1}
+.ei{font-size:48px;margin-bottom:16px}
+@keyframes fu{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+@media(max-width:600px){
+  header{padding:20px 14px 0}h1{font-size:26px}
+  .psec,.tsec,.lsec,.rsec{padding:0 12px}
+  .rgrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-tag">🍽️ 회식 어디가지?</div>
+  <h1>GRC 회식 맛집 추천</h1>
+  <p class="sub">인원수와 테마만 선택하면 딱 맞는 곳 바로 추천!</p>
+  <div class="dbadge">✅ 네이버지도 · 카카오맵 평점 상위 기준</div>
+</header>
+
+<div class="psec">
+  <p class="slabel">step 1 — 몇 명이에요?</p>
+  <div class="pgrid" id="pg"></div>
+  <div class="pind" id="pind">인원을 선택해주세요</div>
+</div>
+<div class="pnotice" id="pn">
+  <div class="pni">🏢 <strong>20명 이상 회식</strong>은 단체석·룸 보유 대형 식당을 우선 추천해드려요<br>방문 전 전화로 <strong>단체 예약 필수</strong> 확인 권장!</div>
+</div>
+
+<div class="tsec">
+  <p class="slabel">step 2 — 오늘 뭐 먹을래요?</p>
+  <div class="tgrid" id="tg"></div>
+</div>
+
+<!-- 랜덤 결과 섹션 -->
+<div class="rand-sec" id="rand-sec">
+  <div class="rand-header">
+    <div class="rand-badge">🎲 카카오맵 평점 상위 · 장르 믹스 9선</div>
+    <div class="rand-title">오늘의 회식 추천 뽑기 결과!</div>
+    <div class="rand-sub">평점 높은 순, 같은 테마 중복 없이 장르를 골고루 섞었어요</div>
+    <button class="reshuffle-btn" onclick="doRandom()">🔀 다시 뽑기</button>
+  </div>
+  <div class="rand-grid" id="rand-grid"></div>
+</div>
+
+<div class="lsec">
+  <p class="slabel">step 3 — 어느 역이에요?</p>
+  <div class="lgrid" id="lg"></div>
+</div>
+
+<div class="cta">
+  <button class="bfind" onclick="show()">🔍 맛집 찾기</button>
+</div>
+
+<div class="rsec" id="rs" style="display:none">
+  <div class="rh">
+    <div class="rt" id="rtit">추천 결과</div>
+    <div class="rm">
+      <div class="nb">📍 네이버·카카오 기준</div>
+      <div class="cb" id="rcnt">0곳</div>
+    </div>
+  </div>
+  <div class="rgrid" id="rg"></div>
+</div>
+
+<script>
+// ★ 평점(nr) 내림차순 정렬 · 중복 없음 · 각 역+테마별 풍부한 데이터
+const DB = [
+
+// ══════════════ 돼지구이 ══════════════
+// 정자역
+{name:'흑돈본가 (Black Pork House)',theme:'돼지구이',loc:'정자역',nr:4.9,rc:'리뷰 1,200+',hours:'11:30–22:00',big:false,cap:'중형(15명)',rec:'제주흑돼지 1등',desc:'네이버 분당 삼겹살 1위권 고정. 제주 흑돼지 전문. 직원 직접 구이. 두껍고 진한 풍미.'},
+{name:'한돈곳간 분당정자점',theme:'돼지구이',loc:'정자역',nr:4.7,rc:'리뷰 400+',hours:'11:30–14:30 / 16:30–22:00',big:false,cap:'중형(20명)',rec:'반찬 퀄리티 최고',desc:'반찬 가짓수·퀄리티로 입소문. 직원 직접 구이. 저녁 웨이팅 상시.'},
+{name:'서현실비 정자직영점',theme:'돼지구이',loc:'정자역',nr:4.7,rc:'리뷰 500+',hours:'11:30–05:00',big:true,cap:'대형(30명+)',rec:'새벽5시 영업',desc:'서현실비 정자 직영. 두툼한 삼겹·목살. 새벽 5시까지 영업.'},
+{name:'돈멜 정자점',theme:'돼지구이',loc:'정자역',nr:4.6,rc:'리뷰 1,100+',hours:'화–일 17:00–23:00 / 월휴무',big:false,cap:'중형(20명)',rec:'목살+젓국 시그니처',desc:'제주식 목살+오겹살 모둠. 젓국 소스에 찍어 먹는 것이 시그니처. 맥주 아이스버킷 서빙.'},
+{name:'맛찬들 왕소금구이 정자점',theme:'돼지구이',loc:'정자역',nr:4.5,rc:'리뷰 1,500+',hours:'16:00–22:00 / 주말 12:00–22:00',big:true,cap:'대형(20~30명)',rec:'단체 회식 강추',desc:'직원이 통째로 구워주는 왕소금 삼겹살. 단체석 확보 가능.'},
+{name:'삼김화로구이 정자점',theme:'돼지구이',loc:'정자역',nr:4.5,rc:'리뷰 700+',hours:'11:30–22:00',big:false,cap:'중형(15명)',rec:'숯불 화로',desc:'숯불 화로 숙성 갈비살. 직원 처음부터 끝까지 구이.'},
+{name:'솔밧해장국 삼겹살',theme:'돼지구이',loc:'정자역',nr:4.4,rc:'리뷰 1,900+',hours:'24시간 연중무휴',big:true,cap:'대형(30명+)',rec:'24시 영업',desc:'24시간 영업. 해장국 무료 제공. 분당 삼겹살 대표 명소.'},
+{name:'은박집 (냉동삼겹살)',theme:'돼지구이',loc:'정자역',nr:4.7,rc:'리뷰 600+',hours:'평일 11:30–자정 / 주말 15:00–자정',big:false,cap:'중형(15명)',rec:'레트로 감성',desc:'보성 녹차 숙성 냉동 삼겹살. 레트로 인테리어. 냉면과 조합이 시그니처.'},
+{name:'일로집 정자점',theme:'돼지구이',loc:'정자역',nr:4.5,rc:'리뷰 500+',hours:'11:00–22:00',big:false,cap:'중형(15명)',rec:'대패삼겹 전문',desc:'대패삼겹+냉면 조합 맛집. 2층 구조 좌석 넉넉. 된장찌개도 별미.'},
+{name:'홍차이나 정자점',theme:'돼지구이',loc:'정자역',nr:4.3,rc:'리뷰 800+',hours:'11:00–21:30',big:false,cap:'중형(15명)',rec:'가성비 국물',desc:'삼겹+해장국 세트. 점심 가성비 최고. 가성비를 중시하는 직장인 단골.'},
+// 수내역
+{name:'육일돈 삼겹살 수내본점',theme:'돼지구이',loc:'수내역',nr:4.8,rc:'리뷰 800+',hours:'11:00–22:00',big:true,cap:'대형(30명+)',rec:'부서회식 단골',desc:'프리미엄 돼지 모둠(삼겹·항정·껍데기). 넓은 홀 30명+ 단체 가능.'},
+{name:'한점의 희열 수내돈',theme:'돼지구이',loc:'수내역',nr:4.8,rc:'리뷰 600+',hours:'평일 11:30–22:00 / 일휴무',big:false,cap:'중형(20명)',rec:'코르키지 Free',desc:'코르키지 무료. 직원 직접 구이+부위별 설명. 특제 냉면 필수.'},
+{name:'제주몬트락 수내점',theme:'돼지구이',loc:'수내역',nr:4.7,rc:'리뷰 1,900+',hours:'16:30–23:00 / 주말 13:30–',big:false,cap:'중형(15명)',rec:'제주 흑돼지',desc:'제주 흑돼지+흑맥주 페어링. 제주 감성 인테리어. 1,900개 리뷰 검증.'},
+{name:'먹보흑돼지',theme:'돼지구이',loc:'수내역',nr:4.7,rc:'리뷰 500+',hours:'화–일 10:00–22:00 / 월휴무',big:false,cap:'중형(20명)',rec:'지리산 흑돼지',desc:'지리산 흑돼지 전문. 제주보다 육향 진하다는 평. 직접 재배 채소.'},
+{name:'판교집 수내직영점',theme:'돼지구이',loc:'수내역',nr:4.6,rc:'리뷰 300+',hours:'11:00–22:00',big:false,cap:'중형(20명)',rec:'냉동삼겹 원조',desc:'수내 냉동삼겹 원조. 치즈김치볶음밥 마무리 시그니처.'},
+{name:'삼다옥 1947 수내',theme:'돼지구이',loc:'수내역',nr:4.5,rc:'리뷰 700+',hours:'11:00–23:00 / 주말 12:00–22:00',big:false,cap:'중형(15명)',rec:'제주 흑돼지 가성비',desc:'와인 BYO 가능. 고기 품질 대비 가격 합리적.'},
+{name:'마루돈가 수내점',theme:'돼지구이',loc:'수내역',nr:4.4,rc:'리뷰 700+',hours:'11:30–15:00 / 17:00–23:00',big:false,cap:'중형(20명)',rec:'양념갈비+냉면',desc:'양념갈비·목살 직원 직접 구이. 냉면 마무리 필수.'},
+{name:'고기를굽다 수내점',theme:'돼지구이',loc:'수내역',nr:4.4,rc:'리뷰 200+',hours:'11:00–15:00 / 17:00–23:00 / 일휴무',big:false,cap:'소형(10명)',rec:'직화 특수부위',desc:'직화 특수부위 전문. 직접 뼈 발라내 신선함 보장.'},
+{name:'생활맥주 수내골목점',theme:'돼지구이',loc:'수내역',nr:4.5,rc:'리뷰 200+',hours:'16:00–00:30',big:false,cap:'소형(10명)',rec:'골목 분위기',desc:'수내역 골목 생맥주+안주. 홍콩 골목 느낌. 드래프트 맥주 맛 최고.'},
+// 서현역
+{name:'서현실비',theme:'돼지구이',loc:'서현역',nr:4.8,rc:'리뷰 2,800+',hours:'11:30–02:00 연중무휴',big:true,cap:'대형(30명+)',rec:'서현 삼겹 레전드',desc:'네이버 블로그 2,800+ 리뷰. 분당 삼겹살 검색 최상위. 대형 홀로 부서 회식 OK.'},
+{name:'돈블랑 서현점',theme:'돼지구이',loc:'서현역',nr:4.6,rc:'리뷰 700+',hours:'11:00–22:00',big:true,cap:'대형(30명+)',rec:'발레파킹·대형홀',desc:'세련된 인테리어에 발레파킹. 점심 김치찌개 세트 가성비 우수.'},
+{name:'서현돼지',theme:'돼지구이',loc:'서현역',nr:4.8,rc:'리뷰 350+',hours:'영업시간 전화 확인',big:false,cap:'중형(20명)',rec:'서현 숨은 맛집',desc:'평점 4.8 서현 숨은 맛집. 갈비살·삼겹 직화구이. 방문객 만족도 최상.'},
+{name:'쏠밥 삼겹살해장국 서현점',theme:'돼지구이',loc:'서현역',nr:4.5,rc:'리뷰 700+',hours:'24시간 연중무휴',big:true,cap:'대형(20명+)',rec:'서현 24시 영업',desc:'서현 24시 삼겹살. 해장국 무료. 새벽 회식도 OK.'},
+{name:'육화몽 서현점',theme:'돼지구이',loc:'서현역',nr:4.5,rc:'리뷰 900+',hours:'11:30–23:00 / 월휴무',big:true,cap:'대형(30명+)',rec:'단체석 완비',desc:'서현 고기집 상위. 넓은 홀 단체석. 돼지구이 메인.'},
+{name:'그리든 고기 서현점',theme:'돼지구이',loc:'서현역',nr:4.4,rc:'리뷰 200+',hours:'16:00–23:00 / 일휴무',big:false,cap:'중형(15명)',rec:'프라이빗 룸',desc:'프라이빗 룸 구이. 직원 직접 구이. 연기 환기 잘 됨.'},
+{name:'먹보흑돼지 서현점',theme:'돼지구이',loc:'서현역',nr:4.6,rc:'리뷰 300+',hours:'화–일 10:00–22:00 / 월휴무',big:false,cap:'중형(20명)',rec:'지리산 흑돼지',desc:'지리산 흑돼지 전문. 직화구이로 육즙 가득.'},
+
+// ══════════════ 족발·보쌈 ══════════════
+{name:'윤밀원',theme:'족발·보쌈',loc:'수내역',nr:4.8,rc:'리뷰 3,200+',hours:'11:30–15:00 / 17:00–21:30',big:true,cap:'대형(30명+)',rec:'분당 족발 레전드',desc:'네이버 "분당 족발" 1위. 2019년~ 블루리본 서베이 등재. 앞발 쫄깃함 일품. 3,200+ 리뷰. 오픈 런 필수.'},
+{name:'왕창족발 수내점',theme:'족발·보쌈',loc:'수내역',nr:4.7,rc:'리뷰 900+',hours:'16:00–자정 / 주말 14:00–자정',big:true,cap:'대형(20~30명)',rec:'반반 시그니처',desc:'당일 삶은 족발. 오리지널+매운 반반 시그니처. 막국수 무한리필.'},
+{name:'수내족발',theme:'족발·보쌈',loc:'수내역',nr:4.5,rc:'리뷰 400+',hours:'13:00–자정 (일 23:30)',big:false,cap:'중형(15명)',rec:'칸막이 프라이빗',desc:'칸막이 개인 공간. 족발+보쌈 세트. 친절한 직원.'},
+{name:'석아저씨족발 수내',theme:'족발·보쌈',loc:'수내역',nr:4.5,rc:'리뷰 200+',hours:'11:55–23:30',big:false,cap:'소형(10명)',rec:'1인분 가능',desc:'1인분 족발 가능한 드문 집. 쫄깃하고 잡내 없음.'},
+{name:'항아리보쌈 정자점',theme:'족발·보쌈',loc:'정자역',nr:4.7,rc:'리뷰 900+',hours:'11:00–22:00 / 화휴무',big:false,cap:'중형(15~20명)',rec:'보쌈 가성비',desc:'2인 점심 보쌈 세트 가성비 최고. 담백한 수육. 낙지전 조합 일품.'},
+{name:'정자족발',theme:'족발·보쌈',loc:'정자역',nr:4.4,rc:'리뷰 200+',hours:'11:00–22:00',big:false,cap:'소형(10명)',rec:'매콤 불족발',desc:'매콤 족발·불족발 전문. 쪽파가 맛있음. 정자역 도보 5분.'},
+{name:'삼족 서현역점',theme:'족발·보쌈',loc:'서현역',nr:4.6,rc:'리뷰 700+',hours:'15:00–23:30 / 일휴무',big:false,cap:'중형(20명)',rec:'10년 전통',desc:'서현 10년 이상 토박이 단골. 앞발 쫄깃함 우수. 매운 족발 인기.'},
+{name:'보조락 서현점',theme:'족발·보쌈',loc:'서현역',nr:4.2,rc:'리뷰 500+',hours:'11:30–22:00',big:false,cap:'중형(15명)',rec:'문어보쌈 특화',desc:'문어보쌈 시그니처. 비주얼 좋고 인스타 성지. 소분 메뉴도 있음.'},
+{name:'귀한족발 서현점',theme:'족발·보쌈',loc:'서현역',nr:4.5,rc:'리뷰 100+',hours:'영업시간 전화 확인',big:false,cap:'소형(10명)',rec:'신흥 강자',desc:'카카오 서현 족발 신흥 강자. 부드럽고 쫄깃. 웨이팅 발생 중.'},
+
+// ══════════════ 소고기 ══════════════
+{name:'달구벌뭉티기 서현점',theme:'소고기',loc:'서현역',nr:4.8,rc:'리뷰 1,800+',hours:'10:00–22:00',big:true,cap:'대형(30명+)',rec:'서현 한우 1등',desc:'네이버 서현 한우 검색 최상위. 육사시미(뭉티기)로 유명. 1,800+ 리뷰. 대형 홀.'},
+{name:'하누비노 서현점',theme:'소고기',loc:'서현역',nr:4.7,rc:'리뷰 1,200+',hours:'11:00–22:00',big:true,cap:'대형(20~30명)',rec:'코르키지 Free',desc:'코르키지 무료. 투뿔 한우 점심 세트 우수. 단체석 완비.'},
+{name:'설화한우',theme:'소고기',loc:'서현역',nr:4.7,rc:'리뷰 800+',hours:'11:30–22:00',big:false,cap:'중형(20명)',rec:'프리미엄 한우',desc:'샤토브리앙·등심 탁월. 직원 직접 구이. 된장밥 마무리 필수.'},
+{name:'육화몽 서현점',theme:'소고기',loc:'서현역',nr:4.5,rc:'리뷰 900+',hours:'11:30–23:00 / 월휴무',big:true,cap:'대형(30명+)',rec:'한우+돼지 복합',desc:'서현 대형 한우+돼지 복합 명소. 단체석. 반찬 많고 가격 합리적.'},
+{name:'하누비노 투뿔숙성한우 정자점',theme:'소고기',loc:'정자역',nr:4.7,rc:'리뷰 1,100+',hours:'11:30–23:00',big:false,cap:'중형(15명)',rec:'코르키지 Free',desc:'네이버 정자 한우 상위권. 투뿔 한우 코르키지 무료.'},
+{name:'우상화로구이 정자점',theme:'소고기',loc:'정자역',nr:4.8,rc:'리뷰 400+',hours:'12:00–23:00',big:false,cap:'중형(15명)',rec:'숯불 화로 한우',desc:'숯불 화로 한우 구이. 달걀노른자 간장밥·레몬 소바 시그니처.'},
+{name:'육덕등심 정자점',theme:'소고기',loc:'정자역',nr:4.5,rc:'리뷰 500+',hours:'11:30–23:00',big:false,cap:'중형(15명)',rec:'정자 한우',desc:'코르키지 무료. 가격 대비 품질 우수하고 서비스 훌륭.'},
+{name:'생활한우 수내',theme:'소고기',loc:'수내역',nr:4.5,rc:'리뷰 600+',hours:'평일 11:30–22:00 / 일휴무',big:true,cap:'중형(20명)',rec:'가성비 한우',desc:'수내 한우 가성비 맛집. 육회도 맛있고 된장찌개 일품. 단체석 보유.'},
+{name:'한점의 희열 수내돈',theme:'소고기',loc:'수내역',nr:4.6,rc:'리뷰 400+',hours:'평일 11:30–22:00 / 일휴무',big:false,cap:'중형(15명)',rec:'코르키지+한우',desc:'한우도 함께 운영. 코르키지 무료. 와인 지참 한우 코스.'},
+
+// ══════════════ 회·해산물 ══════════════
+{name:'회사랑방',theme:'회·해산물',loc:'서현역',nr:4.7,rc:'리뷰 1,400+',hours:'11:40–15:00 / 16:30–21:50 / 일휴무',big:true,cap:'대형(30명+)',rec:'서현 회 1등',desc:'네이버 서현 횟집 최상위. 제철 활어 직송. 성게알(7~9월) 최고. 단체석 가능.'},
+{name:'속초종합어시장 서현점',theme:'회·해산물',loc:'서현역',nr:4.5,rc:'리뷰 500+',hours:'11:00–04:30 연중무휴',big:true,cap:'대형(30명+)',rec:'새벽4시 영업',desc:'오징어회·도다리봄봄 세트 인기. 새벽 4시 30분까지. 가성비 최고.'},
+{name:'회짱포짱 서현점',theme:'회·해산물',loc:'서현역',nr:4.6,rc:'리뷰 500+',hours:'11:30–22:00',big:false,cap:'소형(10명)',rec:'고등어회 특화',desc:'통영산 고등어 사시미. 고소하고 비리지 않음. 초밥 구성도 있음.'},
+{name:'팔팔회 정자본점',theme:'회·해산물',loc:'정자역',nr:4.8,rc:'리뷰 600+',hours:'17:00–03:00 / 일휴무',big:false,cap:'소형(10명)',rec:'직송 활어',desc:'매일 직송 활어. 숙성회·매운탕 코스. 예약 필수. 새벽 3시까지.'},
+{name:'성빈네횟집 정자본점',theme:'회·해산물',loc:'정자역',nr:5.0,rc:'리뷰 100+',hours:'10:30–22:30',big:false,cap:'소형(10명)',rec:'가성비 동네횟집',desc:'정자 숨은 가성비 횟집. 점심 이리탕·도리뱅뱅. 저녁 계절 활어.'},
+{name:'더막회 분당본점',theme:'회·해산물',loc:'수내역',nr:4.9,rc:'리뷰 500+',hours:'영업시간 전화 확인',big:true,cap:'대형(20~30명)',rec:'포항 직송 막회',desc:'포항 직송 막회 전문. 항구 콘셉트 힙한 인테리어. 수내 회 맛집 상위.'},
+{name:'해선 숙성회코스',theme:'회·해산물',loc:'수내역',nr:4.9,rc:'리뷰 400+',hours:'16:00–22:00 / 일휴무',big:false,cap:'소형(10명)',rec:'숙성회 코스',desc:'광어·참돔·부시리 숙성. 1인 43,000원 코스. 수내역 5분.'},
+{name:'집게집 (대게·킹크랩)',theme:'회·해산물',loc:'수내역',nr:4.6,rc:'리뷰 400+',hours:'12:00–22:00',big:false,cap:'소형(10명)',rec:'대게·킹크랩',desc:'대게·킹크랩 전문. 새우튀김·비빔밥 기본 제공. 2kg 두 명 배부름.'},
+{name:'만선항횟집 수내',theme:'회·해산물',loc:'수내역',nr:4.2,rc:'리뷰 400+',hours:'16:00–01:00',big:false,cap:'중형(15명)',rec:'남도 제철 해산물',desc:'남도식 계절 해산물. 복어·광어 등 특수 어종.'},
+{name:'더막회 정자점',theme:'회·해산물',loc:'정자역',nr:4.6,rc:'리뷰 200+',hours:'영업시간 전화 확인',big:false,cap:'중형(15명)',rec:'막회 전문',desc:'정자역 막회 전문. 신선도 높고 가성비 우수.'},
+
+// ══════════════ 치킨 ══════════════
+// 정자역
+{name:'행복치킨 정자점',theme:'치킨',loc:'정자역',nr:4.7,rc:'리뷰 2,100+',hours:'12:00–23:00 / 주말 22:00',big:true,cap:'대형(30명+)',rec:'분당 치킨 1등',desc:'네이버·카카오 분당 치킨 최상위. 겉바속촉 정석. 소이갈릭·매운양념 인기. 넓은 홀.'},
+{name:'깐부치킨 정자카페거리점',theme:'치킨',loc:'정자역',nr:4.3,rc:'리뷰 500+',hours:'15:30–01:00',big:false,cap:'중형(20명)',rec:'분위기 좋은 치킨',desc:'정자카페거리 치킨+맥주. 커리치킨텐더 시그니처. 스포츠 중계 TV.'},
+{name:'감탄계 숯불치킨 정자점',theme:'치킨',loc:'정자역',nr:4.3,rc:'리뷰 200+',hours:'11:00–23:30',big:false,cap:'중형(15명)',rec:'숯불 통닭',desc:'숯불 직화 반마리 치킨. 테라스 야외석 여름 분위기 최고. 드래프트 맥주 4,000원.'},
+{name:'바삭통통 닭강정 정자',theme:'치킨',loc:'정자역',nr:4.8,rc:'리뷰 200+',hours:'11:00–자정',big:false,cap:'소형(10명)',rec:'닭강정 전문',desc:'달달하고 바삭한 닭강정. 1인분도 가능. 야식으로도 최적.'},
+// 수내역
+{name:'깐부치킨 분당수내점',theme:'치킨',loc:'수내역',nr:4.3,rc:'리뷰 300+',hours:'12:00–23:00',big:false,cap:'중형(15명)',rec:'크리스피 치킨',desc:'수내역 치킨+맥주. 겉면 크리스피하고 육즙 풍부. 수내골목 단골집.'},
+{name:'오븐숯불민족 두마리치킨 수내점',theme:'치킨',loc:'수내역',nr:4.4,rc:'리뷰 400+',hours:'11:00–23:00',big:true,cap:'대형(20명+)',rec:'두마리 치킨',desc:'수내역 두마리 치킨 전문. 오븐 숯불 방식으로 담백하고 건강한 맛. 넓은 홀로 단체 가능.'},
+{name:'사바사바 수내점',theme:'치킨',loc:'수내역',nr:4.2,rc:'리뷰 200+',hours:'13:00–00:30',big:false,cap:'소형(10명)',rec:'테라스 치맥',desc:'테라스석에서 치맥 즐기기 좋음. 바삭한 후라이드. 드래프트 맥주 잘 관리됨.'},
+{name:'구도로통닭 분당수내점',theme:'치킨',loc:'수내역',nr:4.5,rc:'리뷰 400+',hours:'16:00–자정',big:false,cap:'중형(20명)',rec:'수내 치킨 명소',desc:'수내역 치킨+맥주. 로봇 서빙으로 편리. 다양한 메뉴 선택지.'},
+{name:'생활맥주 수내골목점 (치킨)',theme:'치킨',loc:'수내역',nr:4.6,rc:'리뷰 300+',hours:'16:00–00:30',big:false,cap:'소형(10명)',rec:'골목 치맥',desc:'수내 좁은 골목 치킨+드래프트 맥주. 홍콩 골목 감성. 맥주 맛 특히 좋다는 평.'},
+// 서현역
+{name:'나로도치킨호프 서현점',theme:'치킨',loc:'서현역',nr:4.4,rc:'리뷰 800+',hours:'14:30–02:00 / 일휴무',big:false,cap:'중형(15명)',rec:'서현 치킨 명소',desc:'서현 치킨+맥주 오래된 명소. 후라이드 바삭함 일품. 항상 만석. 토요일 웨이팅.'},
+{name:'아웃닭 서현점',theme:'치킨',loc:'서현역',nr:4.4,rc:'리뷰 200+',hours:'영업시간 확인 필요',big:false,cap:'중형(15명)',rec:'소스 다양',desc:'서현역 치킨+맥주. 다양한 소스. 어두운 인테리어로 분위기 있음.'},
+{name:'쌈통닭 서현점',theme:'치킨',loc:'서현역',nr:4.3,rc:'리뷰 300+',hours:'13:00–01:00',big:false,cap:'중형(15명)',rec:'숙성치킨',desc:'숙성 치킨으로 육즙 풍부. 드래프트 맥주와 궁합 좋음.'},
+{name:'깐부치킨 서현점',theme:'치킨',loc:'서현역',nr:4.2,rc:'리뷰 200+',hours:'15:00–01:00',big:false,cap:'중형(15명)',rec:'크리스피',desc:'서현역 크리스피 치킨+맥주. 스포츠 중계 TV. 단체석 가능.'},
+
+// ══════════════ 이자카야 ══════════════
+{name:'이자카야 잔잔 서현역점',theme:'이자카야',loc:'서현역',nr:4.7,rc:'리뷰 800+',hours:'17:00–01:00 / 금토 02:00',big:false,cap:'중형(20명)',rec:'서현 이자카야 1등',desc:'네이버 서현 이자카야 최상위. 오마카세 40,000원. 룸석 완비. 하이볼·사케 다양.'},
+{name:'웅성웅성 서현본점',theme:'이자카야',loc:'서현역',nr:4.9,rc:'리뷰 200+',hours:'16:00–02:00',big:false,cap:'소형(10명)',rec:'테라스석',desc:'테라스 야외석 매력. 우니동·꼬치 퀄리티 높음. 사케 라인업 풍부.'},
+{name:'스미노카리 서현점',theme:'이자카야',loc:'서현역',nr:4.6,rc:'리뷰 400+',hours:'영업시간 전화 확인',big:false,cap:'소형(10명)',rec:'일본 선술집 감성',desc:'진짜 일본 선술집 분위기. 안주 가성비 좋고 하이볼 진함.'},
+{name:'하루인 정자점',theme:'이자카야',loc:'정자역',nr:4.7,rc:'리뷰 600+',hours:'15:00–자정 / 일휴무',big:false,cap:'중형(20명)',rec:'프라이빗 룸 완비',desc:'전석 프라이빗 룸. 한상차림 코스. 전화 예약 필수.'},
+{name:'취키 정자점',theme:'이자카야',loc:'정자역',nr:4.5,rc:'리뷰 400+',hours:'영업시간 확인 필요',big:false,cap:'소형(10명)',rec:'분당 이자카야 베스트',desc:'분당 최고 이자카야. 튀김류 맛있고 하이볼 진함. 광어안키모 강추.'},
+{name:'세스세스세 정자점',theme:'이자카야',loc:'정자역',nr:4.3,rc:'리뷰 200+',hours:'영업시간 확인 필요',big:false,cap:'소형(10명)',rec:'루프탑 이자카야',desc:'루프탑 이자카야. 파스타·튀김 안주. 노래방 기계 있어 흥 UP.'},
+{name:'소소객잔 분당정자점',theme:'이자카야',loc:'정자역',nr:5.0,rc:'리뷰 400+',hours:'17:00–01:00',big:false,cap:'중형(15명)',rec:'홍콩 선술집',desc:'홍콩 선술집 콘셉트. 소롱포·마라탕·크리스피 국수. 하이볼+광동요리 페어링 완벽.'},
+{name:'이자카야 잔잔 수내점',theme:'이자카야',loc:'수내역',nr:4.6,rc:'리뷰 300+',hours:'17:00–01:00',big:false,cap:'중형(15명)',rec:'수내 이자카야',desc:'잔잔 수내지점. 숙성 사시미 코스와 하이볼. 룸석으로 조용한 회식.'},
+
+// ══════════════ 중식 ══════════════
+// 수내역
+{name:'팔복 수내점',theme:'중식',loc:'수내역',nr:4.9,rc:'리뷰 2,400+',hours:'11:30–15:00 / 17:00–22:00',big:true,cap:'대형(30명+)',rec:'수내 중식 레전드',desc:'네이버·카카오 수내 중식 1위. 연잎돼지·짬뽕 강추. 2,400+ 리뷰 4.9점. 예약 필수.'},
+{name:'짬뽕지존 수내점',theme:'중식',loc:'수내역',nr:4.8,rc:'리뷰 500+',hours:'08:00–자정 (화 24시간)',big:false,cap:'중형(15명)',rec:'짬뽕 전문',desc:'짬뽕 전문점. 풀코스 탕수육·뒤집는 탕수육. 부어먹는 스타일 선택 가능. 24시간에 가까운 영업.'},
+{name:'중식당 만원 수내점',theme:'중식',loc:'수내역',nr:4.6,rc:'리뷰 500+',hours:'11:30–14:20 / 17:00–20:20 / 화휴무',big:false,cap:'소형(10명)',rec:'짬뽕 맛집',desc:'네이버 수내 짬뽕 맛집 단골 등장. 현지인 단골집. 항상 웨이팅.'},
+{name:'참진짜장짬뽕',theme:'중식',loc:'수내역',nr:4.3,rc:'리뷰 500+',hours:'11:00–21:30 / 일 15:00–21:00',big:false,cap:'소형(10명)',rec:'가성비 중식',desc:'반반세트 10,000원대. 수내 가성비 중식. 짜장·짬뽕 모두 무난하게 맛있음.'},
+{name:'옛날손짜장',theme:'중식',loc:'수내역',nr:4.2,rc:'리뷰 400+',hours:'11:00–21:00',big:false,cap:'소형(10명)',rec:'20년 전통',desc:'고래마켓 지하 20년 이상 전통. 수제 면 직접 반죽. 짜장면 정통 스타일.'},
+{name:'홍차이나 수내점',theme:'중식',loc:'수내역',nr:4.3,rc:'리뷰 800+',hours:'11:00–21:30',big:false,cap:'소형(10명)',rec:'가성비 짜장짬뽕',desc:'가성비 짜장면 7,500원. 짬뽕도 무난하게 맛있음. 직장인 점심 단골.'},
+// 정자역
+{name:'소소객잔 분당정자점',theme:'중식',loc:'정자역',nr:5.0,rc:'리뷰 400+',hours:'17:00–01:00',big:false,cap:'중형(15명)',rec:'정자 중식 No.1',desc:'홍콩 선술집 콘셉트. 소롱포·마라탕·광동요리. 정자 중식 검색 1위.'},
+{name:'홍차이나 정자점',theme:'중식',loc:'정자역',nr:4.3,rc:'리뷰 800+',hours:'11:00–21:30',big:false,cap:'중형(15명)',rec:'정자 가성비 중식',desc:'정자역 근처 가성비 중식. 항상 만석. 짬뽕 맛 좋다는 평.'},
+{name:'꼬까2 정자점',theme:'중식',loc:'정자역',nr:4.2,rc:'리뷰 500+',hours:'11:30–22:00',big:false,cap:'중형(15명)',rec:'홍콩 스타일',desc:'홍콩 스타일 중식. 황마라 짬뽕 독특함. 오피스 직장인 점심 단골.'},
+{name:'블루샹하이 정자점',theme:'중식',loc:'정자역',nr:4.1,rc:'리뷰 1,500+',hours:'11:30–22:00',big:true,cap:'대형(30명+)',rec:'대형 연회 가능',desc:'정자역 대형 중식당. 연회·단체석 완비. 코스 요리 메뉴 있음. 1,500+ 리뷰.'},
+{name:'칸지고고 분당점',theme:'중식',loc:'수내역',nr:4.2,rc:'리뷰 700+',hours:'11:30–15:00 / 17:30–22:00',big:false,cap:'중형(20명)',rec:'프리미엄 중식',desc:'네이버 분당 프리미엄 중식. 탕수육·양장피 각종 정통 요리. 가격대 있으나 퀄리티 보장.'},
+{name:'자오참',theme:'중식',loc:'정자역',nr:4.3,rc:'리뷰 400+',hours:'11:00–22:30 / 일휴무',big:true,cap:'대형(30명+)',rec:'깔끔한 중식',desc:'정자 대림아크로텔 중식당. 짜장·짬뽕 모두 맛있고 깔끔. 점심 데일리 세트 가성비 우수.'},
+// 서현역
+{name:'딘타이펑 분당AK점',theme:'중식',loc:'서현역',nr:4.6,rc:'리뷰 1,200+',hours:'11:00–22:00',big:true,cap:'대형(30명+)',rec:'소롱포 명가',desc:'딘타이펑 분당 AK플라자점. 소롱포 전문 글로벌 체인. 단체 예약 가능.'},
+{name:'주누돈까스냉면 서현점',theme:'중식',loc:'서현역',nr:4.4,rc:'리뷰 1,100+',hours:'09:00–21:30',big:false,cap:'중형(20명)',rec:'돈까스+냉면 이색',desc:'돈까스+냉면 이색 조합. 1,100+ 리뷰 검증. 가성비 점심.'},
+{name:'최고집짬뽕 서현점',theme:'중식',loc:'서현역',nr:4.2,rc:'리뷰 1,700+',hours:'11:00–21:00',big:false,cap:'중형(15명)',rec:'서현 짬뽕 대표',desc:'서현 짬뽕 검색 상위권. 1,700+ 리뷰. 가성비 좋은 짬뽕 전문.'},
+
+// ══════════════ 양꼬치 ══════════════
+{name:'이가네양꼬치 서현점',theme:'양꼬치',loc:'서현역',nr:4.5,rc:'리뷰 600+',hours:'16:00–자정 / 일 15:00–23:00',big:false,cap:'중형(20명)',rec:'서현 양꼬치 1등',desc:'네이버 서현 양꼬치 검색 상위. 양갈비·양꼬치 크고 육향 강함. 칭따오·연태고량주 함께.'},
+{name:'왕푸징 양꼬치 서현점',theme:'양꼬치',loc:'서현역',nr:4.3,rc:'리뷰 400+',hours:'16:00–자정',big:false,cap:'중형(15명)',rec:'마파두부+양꼬치',desc:'서현 양꼬치 양대 산맥. 마파두부도 판매. 꼬치 가성비 우수.'},
+{name:'경성양꼬치 정자점',theme:'양꼬치',loc:'정자역',nr:4.5,rc:'리뷰 100+',hours:'영업시간 확인 필요',big:false,cap:'소형(10명)',rec:'정자 양꼬치',desc:'정자역 양꼬치. 꼬치 크기가 커서 푸짐함. 구오바로우도 맛있음.'},
+{name:'대박양꼬치 분당점',theme:'양꼬치',loc:'수내역',nr:4.5,rc:'리뷰 400+',hours:'16:00–자정 / 주말 15:00–',big:false,cap:'중형(20명)',rec:'양갈비 강추',desc:'수내 양꼬치 맛집. 양갈비 특히 맛있음. 고량주·칭따오 페어링.'},
+{name:'양가네 양꼬치 수내점',theme:'양꼬치',loc:'수내역',nr:4.4,rc:'리뷰 300+',hours:'16:00–자정',big:false,cap:'중형(15명)',rec:'수내 양꼬치',desc:'수내역 양꼬치. 넓은 홀 환기 잘 됨. 양꼬치+볶음밥 세트 가성비 우수.'},
+{name:'풍성양꼬치 서현점',theme:'양꼬치',loc:'서현역',nr:4.4,rc:'리뷰 200+',hours:'16:00–자정',big:false,cap:'중형(15명)',rec:'육즙 풍부',desc:'서현 양꼬치 육즙 풍부하다는 평. 소스 종류 다양. 야채 볶음과의 조합 좋음.'},
+{name:'더쿵 양꼬치 서현점',theme:'양꼬치',loc:'서현역',nr:4.5,rc:'리뷰 300+',hours:'16:00–자정',big:false,cap:'중형(15명)',rec:'힙한 분위기',desc:'서현역 분위기 좋은 양꼬치집. 조명·인테리어 힙함. 꼬치 넉넉하고 맥주 라인업 다양.'},
+{name:'후통 양꼬치 수내점',theme:'양꼬치',loc:'수내역',nr:4.3,rc:'리뷰 200+',hours:'16:00–자정',big:false,cap:'소형(10명)',rec:'가성비 양꼬치',desc:'수내역 도보권 가성비 양꼬치. 꼬치 양 넉넉. 2차 장소로 많이 이용.'},
+{name:'유니버스 양꼬치 정자점',theme:'양꼬치',loc:'정자역',nr:4.4,rc:'리뷰 200+',hours:'17:00–자정',big:false,cap:'중형(15명)',rec:'다양한 부위',desc:'정자역 양꼬치 신흥 강자. 양 특수부위까지 다양하게. 고량주와 페어링 완벽.'},
+];
+
+const TC={
+  '돼지구이':{bg:'rgba(255,107,107,.15)',c:'#ff6b6b',em:'🥩'},
+  '족발·보쌈':{bg:'rgba(168,85,247,.15)',c:'#a855f7',em:'🍖'},
+  '소고기':{bg:'rgba(245,158,11,.15)',c:'#f59e0b',em:'🐄'},
+  '회·해산물':{bg:'rgba(59,130,246,.15)',c:'#3b82f6',em:'🐟'},
+  '치킨':{bg:'rgba(249,115,22,.15)',c:'#f97316',em:'🍗'},
+  '이자카야':{bg:'rgba(139,92,246,.15)',c:'#8b5cf6',em:'🍶'},
+  '중식':{bg:'rgba(236,72,153,.15)',c:'#ec4899',em:'🥢'},
+  '양꼬치':{bg:'rgba(16,185,129,.15)',c:'#10b981',em:'🔥'},
+};
+const PO=[
+  {cnt:'2–3명',em:'👥',sub:'소규모',big:false},
+  {cnt:'4–5명',em:'🙌',sub:'팀식사',big:false},
+  {cnt:'6–9명',em:'🎉',sub:'팀회식',big:false},
+  {cnt:'10–19명',em:'🍻',sub:'단체석',big:false},
+  {cnt:'20–29명',em:'🏅',sub:'대형',big:true},
+  {cnt:'30명+',em:'🏢',sub:'부서회식',big:true},
+];
+const TL=[
+  {l:'돼지구이',e:'🥩'},{l:'족발·보쌈',e:'🍖'},{l:'소고기',e:'🐄'},
+  {l:'회·해산물',e:'🐟'},{l:'치킨',e:'🍗'},{l:'이자카야',e:'🍶'},
+  {l:'중식',e:'🥢'},{l:'양꼬치',e:'🔥'},{l:'🎲랜덤',e:'🎲',isRandom:true}
+];
+const LS=['전체','정자역','수내역','서현역'];
+let sp=null,st=new Set(),sl='전체';
+
+function renderAll(){
+  // 인원
+  document.getElementById('pg').innerHTML=PO.map((p,i)=>`
+    <button class="pbtn${p.big?' big':''}" onclick="pp(${i})">
+      <span class="pe">${p.em}</span><span class="pc">${p.cnt}</span><span class="ps">${p.sub}</span>
+    </button>`).join('');
+  // 테마
+  document.getElementById('tg').innerHTML=TL.map(t=>`
+    <button class="tbtn${t.isRandom?' random-btn':''}" data-t="${t.l}" onclick="pt('${t.l}')">
+      <span class="te">${t.e}</span><span class="tl">${t.isRandom?'오늘의 뽑기':t.l}</span>
+    </button>`).join('');
+  // 지역
+  document.getElementById('lg').innerHTML=LS.map(l=>`
+    <button class="lbtn${l===sl?' act':''}" onclick="pl('${l}')">${l}</button>`).join('');
+}
+function pp(i){
+  sp=PO[i];
+  document.querySelectorAll('.pbtn').forEach((b,j)=>b.classList.toggle('act',j===i));
+  const d=document.getElementById('pind');d.textContent=`${sp.em} ${sp.cnt} 회식이군요!`;d.classList.add('on');
+  document.getElementById('pn').classList.toggle('show',sp.big);
+}
+function pt(t){
+  const isRand = t==='🎲랜덤';
+
+  if(isRand){
+    // 랜덤은 단독 토글 — 다른 테마 모두 해제
+    if(st.has('🎲랜덤')){
+      st.delete('🎲랜덤');
+    } else {
+      st.clear();
+      st.add('🎲랜덤');
+    }
+  } else {
+    // 일반 테마: 랜덤 해제 + 다중 토글
+    st.delete('🎲랜덤');
+    if(st.has(t)) st.delete(t);
+    else st.add(t);
+  }
+
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.toggle('act', st.has(b.dataset.t)));
+
+  const nowRand = st.has('🎲랜덤');
+  document.querySelector('.lsec').style.display = nowRand?'none':'';
+  document.querySelector('.cta').style.display   = nowRand?'none':'';
+  document.getElementById('rs').style.display    = 'none';
+  const randSec = document.getElementById('rand-sec');
+  if(nowRand){
+    randSec.classList.add('show');
+    doRandom();
+    randSec.scrollIntoView({behavior:'smooth',block:'start'});
+  } else {
+    randSec.classList.remove('show');
+  }
+}
+function pl(l){
+  sl=l;
+  document.querySelectorAll('.lbtn').forEach(b=>b.classList.toggle('act',b.textContent===l));
+}
+
+function doRandom(){
+  // 카카오맵 평점 기준 상위, 테마별 최대 1~2개씩 균등 분배하여 9개 추출
+  const themes = ['돼지구이','족발·보쌈','소고기','회·해산물','치킨','이자카야','중식','양꼬치'];
+  const picked = [];
+  const usedKeys = new Set();
+
+  // 1라운드: 각 테마에서 평점 1위씩 뽑기
+  themes.forEach(theme => {
+    const pool = DB.filter(r=>r.theme===theme && !usedKeys.has(r.name+'|'+r.theme))
+                   .sort((a,b)=>b.nr-a.nr || Math.random()-.5);
+    if(pool.length){
+      picked.push(pool[0]);
+      usedKeys.add(pool[0].name+'|'+pool[0].theme);
+    }
+  });
+
+  if(picked.length < 9){
+    const remain = DB.filter(r=>!usedKeys.has(r.name+'|'+r.theme))
+                     .sort((a,b)=>b.nr-a.nr);
+    for(const r of remain){
+      if(picked.length>=9) break;
+      const themeCount = picked.filter(p=>p.theme===r.theme).length;
+      if(themeCount<2){
+        picked.push(r);
+        usedKeys.add(r.name+'|'+r.theme);
+      }
+    }
+    if(picked.length<9){
+      const remain2 = DB.filter(r=>!usedKeys.has(r.name+'|'+r.theme)).sort((a,b)=>b.nr-a.nr);
+      for(const r of remain2){
+        if(picked.length>=9) break;
+        picked.push(r);
+        usedKeys.add(r.name+'|'+r.theme);
+      }
+    }
+  }
+
+  // 셔플 (순서에 랜덤성 부여)
+  for(let i=picked.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [picked[i],picked[j]]=[picked[j],picked[i]];
+  }
+
+  const emojis=['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣'];
+  document.getElementById('rand-grid').innerHTML = picked.slice(0,9).map((r,i)=>{
+    const tc=TC[r.theme]||{bg:'rgba(255,255,255,.1)',c:'#fff',em:'🍴'};
+    const nu=`https://map.naver.com/p/search/${encodeURIComponent(r.name+' '+r.loc)}`;
+    const ku=`https://map.kakao.com/link/search/${encodeURIComponent(r.name+' '+r.loc)}`;
+    return `<div class="rand-card" style="animation-delay:${i*.06}s">
+      <div class="rand-card-inner">
+        <div class="rand-num">${i+1}</div>
+        <div style="padding-left:28px">
+          <div class="rtag" style="background:${tc.bg};color:${tc.c};display:inline-flex;margin-bottom:6px">${tc.em} ${r.theme}</div>
+          <div class="rname">${r.name}</div>
+          <div class="rmeta" style="margin-top:4px">
+            <span class="rstar">⭐ ${r.nr}</span>
+            <span class="rdot">·</span>
+            <span style="font-size:11px;color:var(--muted)">${r.rc}</span>
+            <span class="rdot">·</span>
+            <span style="font-size:11px;color:var(--muted)">${r.loc}</span>
+          </div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.5;margin:8px 0 10px">${r.desc}</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:10px">🕐 ${r.hours}</div>
+          <div style="display:flex;gap:6px">
+            <a class="rmb nv" href="${nu}" target="_blank">N 네이버</a>
+            <a class="rmb kk" href="${ku}" target="_blank">K 카카오</a>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function show(){
+  let list=[...DB];
+  if(st.size>0) list=list.filter(r=>st.has(r.theme));
+  if(sl!=='전체') list=list.filter(r=>r.loc===sl);
+
+  const isBig=sp&&sp.big;
+  if(isBig) list.sort((a,b)=>b.big!==a.big?(b.big?1:-1):b.nr-a.nr);
+  else list.sort((a,b)=>b.nr-a.nr);
+
+  // 중복 제거 (이름+테마 조합 기준 — 같은 가게도 테마 다르면 각각 표시)
+  const seen=new Set();
+  list=list.filter(r=>{const key=r.name+'|'+r.theme;if(seen.has(key))return false;seen.add(key);return true;});
+
+  const sec=document.getElementById('rs');
+  sec.style.display='block';
+  sec.scrollIntoView({behavior:'smooth',block:'start'});
+
+  const selectedThemes=[...st].filter(t=>t!=='🎲랜덤');
+  const tl = selectedThemes.length===0 ? '전체 테마'
+           : selectedThemes.map(t=>TC[t]?.em+' '+t).join(' · ');
+  document.getElementById('rtit').textContent=`${sl} · ${tl} 추천`;
+  document.getElementById('rcnt').textContent=`${list.length}곳`;
+
+  if(!list.length){
+    document.getElementById('rg').innerHTML=`<div class="empty"><div class="ei">🤔</div><p>조건에 맞는 맛집이 없어요!<br>테마나 지역을 바꿔보세요.</p></div>`;
+    return;
+  }
+
+  document.getElementById('rg').innerHTML=list.map((r,i)=>{
+    const tc=TC[r.theme]||{bg:'rgba(255,255,255,.1)',c:'#fff',em:'🍴'};
+    const sb=r.big&&isBig;
+    const nu=r.nurl||`https://map.naver.com/p/search/${encodeURIComponent(r.name+' '+r.loc)}`;
+    const ku=r.kurl||`https://map.kakao.com/link/search/${encodeURIComponent(r.name+' '+r.loc)}`;
+    return `<div class="rc${sb?' bigc':''}" style="animation-delay:${i*.035}s">
+      <div class="rtop">
+        <div style="min-width:0;flex:1">
+          <div class="rtag" style="background:${tc.bg};color:${tc.c}">${tc.em} ${r.theme}</div>
+          ${r.big?`<div class="captag">🏢 ${r.cap}</div>`:''}
+          <div class="rname">${r.name}</div>
+          <div class="rmeta">
+            <span class="rn">N</span>
+            <span class="rstar">⭐ ${r.nr}</span>
+            <span class="rdot">·</span>
+            <span>${r.rc}</span>
+            <span class="rdot">·</span>
+            <span>${r.loc}</span>
+          </div>
+        </div>
+        <div class="rbadge${sb?' gold':''}" style="flex-shrink:0">${sb?'🏢 단체 OK':'🔥 '+r.rec}</div>
+      </div>
+      <div class="rdesc">${r.desc}</div>
+      <div class="rfoot">
+        <div class="rhours">🕐 ${r.hours}</div>
+        <div class="rlinks">
+          <a class="rmb nv" href="${nu}" target="_blank">N 네이버</a>
+          <a class="rmb kk" href="${ku}" target="_blank">K 카카오</a>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+renderAll();
+</script>
+</body>
+</html>
