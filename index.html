@@ -73,20 +73,6 @@ h1{font-size:clamp(28px,5vw,52px);font-weight:800;line-height:1.15;letter-spacin
 .rand-card-inner{position:relative;padding:18px}
 @keyframes randIn{from{transform:translateY(20px) scale(.95);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
 
-/* BUDGET */
-.bgsec{position:relative;z-index:5;max-width:680px;margin:0 auto 36px;padding:0 20px}
-.bg-card{background:#fff;border-radius:var(--r);padding:22px 24px}
-.bg-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
-.bg-label{font-size:14px;font-weight:700;color:#222}
-.bg-amount{font-size:22px;font-weight:800;color:var(--accent);letter-spacing:-1px}
-.bg-amount span{font-size:13px;font-weight:600;color:#888;margin-left:4px}
-input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:100px;outline:none;cursor:pointer;background:#e0e0e0}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--accent);box-shadow:0 2px 8px rgba(255,107,107,.35);cursor:pointer;transition:all .15s}
-input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
-.bg-ticks{display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:#aaa;font-weight:600}
-.bg-hint{font-size:12px;color:#999;margin-top:14px;text-align:center;line-height:1.6}
-.bg-ppa{display:inline-block;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);border-radius:100px;padding:4px 14px;font-size:12px;font-weight:700;color:var(--accent);margin-top:8px}
-
 /* LIKE BTN */
 .like-btn{display:flex;align-items:center;gap:5px;background:rgba(255,107,107,.08);border:1.5px solid rgba(255,107,107,.25);border-radius:100px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--accent);cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
 .like-btn:hover{background:rgba(255,107,107,.18);transform:scale(1.05)}
@@ -95,9 +81,9 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
 @keyframes heartPop{0%{transform:scale(1)}50%{transform:scale(1.5)}100%{transform:scale(1)}}
 
 /* LOC */
-.lsec{position:relative;z-index:5;max-width:520px;margin:0 auto 36px;padding:0 20px}
-.lgrid{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.lbtn{flex:1;min-width:100px;background:#fff;border:2px solid #ddd;border-radius:100px;padding:10px 20px;cursor:pointer;font-size:14px;font-weight:700;transition:all .18s;text-align:center;color:#333}
+.lsec{position:relative;z-index:5;max-width:760px;margin:0 auto 36px;padding:0 20px}
+.lgrid{display:flex;gap:8px;justify-content:center;flex-wrap:nowrap}
+.lbtn{flex:1;min-width:0;background:#fff;border:2px solid #ddd;border-radius:100px;padding:10px 8px;cursor:pointer;font-size:13px;font-weight:700;transition:all .18s;text-align:center;color:#333;white-space:nowrap}
 .lbtn:hover{border-color:var(--g);background:rgba(107,203,119,.06)}
 .lbtn.act{border-color:#1a7a30;background:rgba(107,203,119,.12);color:#1a7a30}
 
@@ -140,7 +126,8 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
 @keyframes fu{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
 @media(max-width:600px){
   header{padding:20px 14px 0}h1{font-size:26px}
-  .psec,.tsec,.lsec,.rsec{padding:0 12px}
+  .psec,.tsec,.lsec,.rsec{padding:0 8px}
+  .lbtn{font-size:11px;padding:8px 4px}
   .rgrid{grid-template-columns:1fr}
 }
 </style>
@@ -178,23 +165,6 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
   <div class="rand-grid" id="rand-grid"></div>
 </div>
 
-<!-- STEP 2.5 예산 -->
-<div class="bgsec" id="bgsec">
-  <p class="slabel">step 2.5 — 1인당 예산이 얼마예요?</p>
-  <div class="bg-card">
-    <div class="bg-row">
-      <div class="bg-label">💰 1인당 예산</div>
-      <div class="bg-amount" id="bg-display">5만원 <span>/ 1인</span></div>
-    </div>
-    <input type="range" id="bg-slider" min="1" max="10" value="5" step="1" oninput="updateBudget(this.value)">
-    <div class="bg-ticks">
-      <span>1만원</span><span>3만원</span><span>5만원</span><span>7만원</span><span>10만원</span>
-    </div>
-    <div class="bg-hint" id="bg-hint">
-      인원 선택 시 총 예산도 계산해드려요 😊
-    </div>
-  </div>
-</div>
 
 <div class="lsec">
   <p class="slabel">step 3 — 어느 역이에요?</p>
@@ -333,7 +303,68 @@ const DB = [
 {name:'주누돈까스냉면 서현점',theme:'중식',loc:'서현역',nr:4.4,rc:'리뷰 1,100+',hours:'09:00–21:30',big:false,cap:'중형(20명)',rec:'돈까스+냉면 이색',desc:'돈까스+냉면 이색 조합. 1,100+ 리뷰 검증. 가성비 점심.'},
 {name:'최고집짬뽕 서현점',theme:'중식',loc:'서현역',nr:4.2,rc:'리뷰 1,700+',hours:'11:00–21:00',big:false,cap:'중형(15명)',rec:'서현 짬뽕 대표',desc:'서현 짬뽕 검색 상위권. 1,700+ 리뷰. 가성비 좋은 짬뽕 전문.'},
 
-// ══════════════ 양꼬치 ══════════════
+// ══════════════ 판교역 ══════════════
+// 돼지구이
+{name:'돼지맨션',theme:'돼지구이',loc:'판교역',nr:4.7,rc:'리뷰 900+',hours:'17:00–22:00',big:false,cap:'중형(20명)',rec:'판교 삼겹 No.1',desc:'판교 아브뉴프랑 근처 삼겹살 맛집. 직원 직접 구이. 고기 품질 우수하고 반찬도 풍성. 점심 삼겹 런치도 운영.'},
+{name:'판교집',theme:'돼지구이',loc:'판교역',nr:4.7,rc:'리뷰 500+',hours:'11:30–22:00 / 일 13:30–',big:true,cap:'대형(30명+)',rec:'냉동삼겹 원조',desc:'판교역 도보권 냉동삼겹 원조. 목살도 맛있음. 육사시미+삼겹+된장찌개 조합 최고. 단체석 가능.'},
+{name:'숙성도 판교점',theme:'돼지구이',loc:'판교역',nr:4.6,rc:'리뷰 300+',hours:'11:30–22:30',big:false,cap:'중형(15명)',rec:'독특한 소스 조합',desc:'판교역 숙성 삼겹살 맛집. 생와사비·청어알·허브쌀 등 독특한 조합. 코르키지 가능. 개 동반 입장 가능.'},
+{name:'신도세기 판교점',theme:'돼지구이',loc:'판교역',nr:4.5,rc:'리뷰 700+',hours:'11:30–22:00 / 토 브레이크',big:true,cap:'대형(20명+)',rec:'판교역 도보',desc:'판교역 바로 앞. 오겹살+김치볶음밥 조합 필수. 환기 시스템 우수. 단체석 있음.'},
+{name:'쇼누하누 판교점',theme:'돼지구이',loc:'판교역',nr:4.6,rc:'리뷰 400+',hours:'11:00–22:00',big:false,cap:'중형(15명)',rec:'숙성 소·돼지',desc:'숙성 한우+삼겹 복합 구이집. 런치 세트 가성비 우수. 코르키지 무료. 양념 임연수+쪽파 조합이 별미.'},
+{name:'진짜돼지 판교점',theme:'돼지구이',loc:'판교역',nr:4.4,rc:'리뷰 400+',hours:'11:00–24:00',big:false,cap:'소형(12명)',rec:'24시간 근접',desc:'판교 삼평동 삼겹살. 반찬 담백하고 고기 신선. 식사+술자리 모두 가능.'},
+// 소고기
+{name:'선우가 판교점',theme:'소고기',loc:'판교역',nr:4.8,rc:'리뷰 500+',hours:'11:00–22:00 / 토 21:00',big:false,cap:'중형(20명)',rec:'판교 한우 1등',desc:'하림 운영 판교 대표 한우집. 100,000원 이하로 세 가지 부위+서비스 코스. 코르키지 무료+프라이빗 룸. 예약 필수.'},
+{name:'우몽 판교점',theme:'소고기',loc:'판교역',nr:4.6,rc:'리뷰 200+',hours:'11:00–22:00',big:false,cap:'중형(15명)',rec:'코르키지 Free',desc:'숙성 한우 전문. 코르키지 무료. 연인·가족·회식 모두 적합. 예약 필수.'},
+{name:'한와담 판교점',theme:'소고기',loc:'판교역',nr:4.5,rc:'리뷰 400+',hours:'영업시간 전화 확인',big:false,cap:'중형(15명)',rec:'1++ 한우 코스',desc:'1++ 한우 숙성 전문. 코르키지 무료. 프라이빗 룸. 연말 회식·기념일에 인기.'},
+{name:'우테이블 판교점',theme:'소고기',loc:'판교역',nr:4.5,rc:'리뷰 300+',hours:'11:30–15:00 / 17:00–22:00',big:false,cap:'중형(15명)',rec:'숙성 한우 런치',desc:'판교 아파트먼트 내 숙성 한우. 런치 세트 합리적. 직원 직접 구이.'},
+// 회·해산물
+{name:'방악관 판교점',theme:'회·해산물',loc:'판교역',nr:4.7,rc:'리뷰 800+',hours:'15:00–24:00 / 일휴무',big:false,cap:'중형(15명)',rec:'판교 횟집 1등',desc:'판교동 포장마차 스타일 활어집. 신선한 회+반찬 조합 최고. 평일 저녁도 웨이팅. 소규모 회식·2차 최적.'},
+{name:'람바다 판교점',theme:'회·해산물',loc:'판교역',nr:4.4,rc:'리뷰 400+',hours:'11:00–15:00 / 17:00–22:00',big:false,cap:'소형(10명)',rec:'해산물 코스',desc:'판교 해산물 코스 맛집. 신선하고 다양한 해산물. 데이트·회식 모두 추천.'},
+{name:'마키노차야 판교점',theme:'회·해산물',loc:'판교역',nr:4.4,rc:'리뷰 2,600+',hours:'11:30–15:00 / 18:00–21:00',big:true,cap:'대형(30명+)',rec:'해산물 뷔페',desc:'판교역 해산물 뷔페. 랍스터·굴·스테이크 포함. 2,600+ 리뷰. 단체 식사·가족 모임 적합.'},
+// 치킨
+{name:'일편닭심 판교점',theme:'치킨',loc:'판교역',nr:4.6,rc:'리뷰 700+',hours:'17:00–01:30',big:false,cap:'중형(15명)',rec:'판교 치킨 No.1',desc:'판교 치킨꼬치 전문. TV 소개 유명 맛집. 자리 구하기 어려울 정도로 인기. 판교역 2분.'},
+{name:'홀썸치킨 판교점',theme:'치킨',loc:'판교역',nr:4.4,rc:'리뷰 800+',hours:'10:00–22:00',big:true,cap:'대형(20명+)',rec:'마늘치킨 명가',desc:'판교 마늘치킨 맛집. 넓은 홀로 단체 가능. 맥주+치킨 조합 최고.'},
+{name:'교촌치킨 판교점',theme:'치킨',loc:'판교역',nr:4.3,rc:'리뷰 500+',hours:'11:00–23:00',big:false,cap:'중형(15명)',rec:'허니콤보 판교',desc:'판교 교촌 직영점. 허니콤보·레드콤보 항상 신선. 맥주와 함께 판교 치맥.'},
+// 이자카야
+{name:'야키토리 잔잔 판교점',theme:'이자카야',loc:'판교역',nr:4.9,rc:'리뷰 700+',hours:'17:00–02:00',big:false,cap:'중형(15명)',rec:'판교 이자카야 1등',desc:'판교 최고 이자카야. 이베리코 꼬치 강추. 사케·하이볼 라인업 풍부. 항상 만석.'},
+{name:'탭 퍼블릭 판교점',theme:'이자카야',loc:'판교역',nr:4.5,rc:'리뷰 600+',hours:'11:00–24:00 / 일휴무',big:true,cap:'대형(30명+)',rec:'60가지 생맥주',desc:'60종 수제 맥주 셀프 탭 시스템. 10ml 단위 과금. 넓은 홀 단체 가능. 치킨윙·나초 안주.'},
+{name:'미미 판교점',theme:'이자카야',loc:'판교역',nr:4.6,rc:'리뷰 200+',hours:'17:00–23:30 / 일휴무',big:false,cap:'소형(10명)',rec:'가성비 이자카야',desc:'판교 가성비 최고 이자카야. 유자 하이볼+절임 토마토가 시그니처. 퇴근 후 한잔 하기 최적.'},
+// 중식
+{name:'전국5대짬뽕 연화산 판교점',theme:'중식',loc:'판교역',nr:4.5,rc:'리뷰 1,400+',hours:'11:00–21:00',big:false,cap:'중형(15명)',rec:'전국 5대 짬뽕',desc:'판교 대표 짬뽕집. 차돌짬뽕이 시그니처. 1,400+ 리뷰. 남편·아내 모두 잊지 못하는 맛.'},
+{name:'신승반점 현대백화점 판교점',theme:'중식',loc:'판교역',nr:4.5,rc:'리뷰 1,200+',hours:'10:30–21:00',big:true,cap:'대형(30명+)',rec:'짜장·탕수육 명가',desc:'현대백화점 판교점 내 신승반점. 언제나 웨이팅. 짜장면+탕수육 조합 최고. 단체 가능.'},
+{name:'동청담 판교점',theme:'중식',loc:'판교역',nr:4.2,rc:'리뷰 500+',hours:'11:00–21:00',big:false,cap:'소형(10명)',rec:'판교 짬뽕 맛집',desc:'판교역 인근 짬뽕 맛집. 해물짬뽕 육수 진하고 풍부. 직장인 점심 단골.'},
+// 양꼬치
+{name:'이가네양꼬치 판교점',theme:'양꼬치',loc:'판교역',nr:4.5,rc:'리뷰 300+',hours:'17:00–자정',big:false,cap:'중형(15명)',rec:'판교 양꼬치',desc:'판교역 양꼬치 맛집. 이가네 체인 검증된 품질. 양갈비+꼬치 조합. 고량주 페어링.'},
+
+// ══════════════ 미금역 ══════════════
+// 돼지구이
+{name:'분당그릴',theme:'돼지구이',loc:'미금역',nr:4.8,rc:'리뷰 600+',hours:'16:00–22:00 / 주말 12:00–15:00,17:00–22:00',big:false,cap:'중형(20명)',rec:'미금 삼겹 1등',desc:'네이버 미금역 삼겹살 검색 최상위. 30번 이상 재방문 단골 있는 집. 직원 직접 구이. 웨이팅 상시.'},
+{name:'마초생고기',theme:'돼지구이',loc:'미금역',nr:4.7,rc:'리뷰 400+',hours:'16:30–22:00',big:false,cap:'중형(15명)',rec:'통항정살 전문',desc:'미금역 통항정살·통삼겹 전문. 코르키지 무료. 주인 직접 자랑하는 고기 품질. 냉면도 자체 제조.'},
+{name:'숯과소금',theme:'돼지구이',loc:'미금역',nr:4.7,rc:'리뷰 500+',hours:'17:00–24:00 / 일휴무',big:false,cap:'중형(15명)',rec:'미금 숯불 최고',desc:'미금역 숯불 삼겹 명가. 오겹살 직화구이. 직원 직접 구이. 분당 최고 돼지 레스토랑 평가.'},
+{name:'추억의연탄집',theme:'돼지구이',loc:'미금역',nr:4.4,rc:'리뷰 500+',hours:'16:00–24:00',big:false,cap:'중형(15명)',rec:'고추장삼겹 시그니처',desc:'고추장 삼겹살·연탄 직화 명가. 서울에서도 찾아오는 집. 고추장 특제 소스 조합이 절묘.'},
+{name:'옛시골왕뚜껑삼겹살',theme:'돼지구이',loc:'미금역',nr:4.3,rc:'리뷰 400+',hours:'12:30–23:00',big:false,cap:'중형(15명)',rec:'왕뚜껑 삼겹',desc:'왕뚜껑 위에 삼겹살 구워먹는 레트로 스타일. 미금 식당골목 단골집. 가성비 최고.'},
+{name:'육분당',theme:'돼지구이',loc:'미금역',nr:4.5,rc:'리뷰 500+',hours:'16:00–23:00 / 일휴무',big:false,cap:'중형(15명)',rec:'제주 흑돼지',desc:'미금 제주 흑돼지 전문. 육즙 풍부하고 냄새 없음. 김치찌개 사이드 별미.'},
+{name:'7% 칠백식당',theme:'소고기',loc:'미금역',nr:4.5,rc:'리뷰 400+',hours:'16:00–23:00 / 일휴무',big:false,cap:'소형(12명)',rec:'미금 한우 가성비',desc:'미금역 한우 가성비 최고. 분당에서 이 가격에 이 품질은 여기밖에 없다는 평. 냉면도 맛있음.'},
+// 소고기
+{name:'먹보한우 분당점',theme:'소고기',loc:'미금역',nr:4.4,rc:'리뷰 1,200+',hours:'11:00–22:00',big:true,cap:'대형(30명+)',rec:'대형 한우집',desc:'미금역 대표 한우 체인. 갈비탕·한우구이 모두 우수. 넓은 홀 단체 가능. 11:00부터 영업.'},
+{name:'마초생고기 (한우)',theme:'소고기',loc:'미금역',nr:4.5,rc:'리뷰 300+',hours:'16:30–22:00',big:false,cap:'중형(15명)',rec:'코르키지+한우',desc:'한우도 함께 운영. 코르키지 무료. 주인의 고집스러운 고기 선별.'},
+// 회·해산물
+{name:'그집수산',theme:'회·해산물',loc:'미금역',nr:4.6,rc:'리뷰 200+',hours:'14:10–22:50',big:false,cap:'소형(10명)',rec:'미금 활어 가성비',desc:'미금 식당골목 가성비 활어집. 광어·우럭·참돔 모둠 신선. 6시 이후 예약 필수. 소주 페어링 최고.'},
+{name:'텐모리 미금점',theme:'회·해산물',loc:'미금역',nr:4.5,rc:'리뷰 200+',hours:'11:30–21:30',big:false,cap:'소형(10명)',rec:'숙성회·우니',desc:'미금역 숙성 사시미+우니(성게알) 명가. 고세이산 우니 직송. 이자카야 느낌으로 가볍게.'},
+{name:'미금수산',theme:'회·해산물',loc:'미금역',nr:4.5,rc:'리뷰 200+',hours:'12:00–23:00',big:false,cap:'소형(10명)',rec:'미금 동네횟집',desc:'미금역 가성비 동네 횟집. 광어 신선하고 두툼하게. 75,000원에 두 명 배부름.'},
+{name:'어부의 사계절',theme:'회·해산물',loc:'미금역',nr:4.6,rc:'리뷰 200+',hours:'12:00–01:30',big:false,cap:'소형(10명)',rec:'고등어·청어 전문',desc:'미금 고등어·청어 사시미 전문. 밤 1시 30분까지 영업. 술 한잔 더 하기 딱 좋은 분위기.'},
+// 치킨
+{name:'천서꾼 미금점',theme:'치킨',loc:'미금역',nr:4.8,rc:'리뷰 300+',hours:'16:40–22:00 / 일휴무',big:false,cap:'소형(10명)',rec:'참나무 통닭',desc:'미금 참나무 직화 통닭 전문. 겉바속촉 정석. 맥주와 조합 최고. 항상 웨이팅.'},
+{name:'신통치킨 미금점',theme:'치킨',loc:'미금역',nr:4.4,rc:'리뷰 300+',hours:'영업시간 전화 확인',big:false,cap:'소형(10명)',rec:'레트로 분위기',desc:'미금 레트로 분위기 치킨집. 통닭 스타일. 금요일 저녁 활기찬 분위기.'},
+// 이자카야
+{name:'휘얼 미금점',theme:'이자카야',loc:'미금역',nr:4.9,rc:'리뷰 200+',hours:'16:00–00:50 / 금토 01:50',big:false,cap:'소형(10명)',rec:'미금 이자카야 1등',desc:'미금 식당골목 이자카야 최강자. 술 50% 할인 타임(16~18시). 마라크림새우·수제 해물전 시그니처.'},
+{name:'한식주점 카리 미금점',theme:'이자카야',loc:'미금역',nr:4.7,rc:'리뷰 200+',hours:'17:00–01:00',big:false,cap:'소형(10명)',rec:'한식 안주 이자카야',desc:'전통주+한식 퓨전 이자카야. 파티션으로 프라이빗. 양갈비·전 등 안주 퀄리티 높음.'},
+// 중식
+{name:'취옹 미금점',theme:'중식',loc:'미금역',nr:4.7,rc:'리뷰 300+',hours:'11:30–21:30',big:false,cap:'소형(10명)',rec:'미금 중식 1등',desc:'미금역 구미동 중식당 맛집. 찹쌀탕수육 바삭하고 맛있음. 짬뽕·짜장 모두 합격점.'},
+{name:'이수사 미금점',theme:'회·해산물',loc:'미금역',nr:4.5,rc:'리뷰 500+',hours:'11:30–22:00',big:false,cap:'중형(15명)',rec:'미금 일식 코스',desc:'미금역 오래된 일식당. 런치 20,000원 코스. 사시미 신선하고 방 있어 조용한 회식 가능.'},
+// 양꼬치
+{name:'이가네양꼬치 미금점',theme:'양꼬치',loc:'미금역',nr:4.5,rc:'리뷰 200+',hours:'16:00–자정',big:false,cap:'중형(15명)',rec:'미금 양꼬치',desc:'미금역 양꼬치 맛집. 이가네 체인 검증된 품질. 양갈비 크고 육향 강함.'},
+
+
 {name:'이가네양꼬치 서현점',theme:'양꼬치',loc:'서현역',nr:4.5,rc:'리뷰 600+',hours:'16:00–자정 / 일 15:00–23:00',big:false,cap:'중형(20명)',rec:'서현 양꼬치 1등',desc:'네이버 서현 양꼬치 검색 상위. 양갈비·양꼬치 크고 육향 강함. 칭따오·연태고량주 함께.'},
 {name:'왕푸징 양꼬치 서현점',theme:'양꼬치',loc:'서현역',nr:4.3,rc:'리뷰 400+',hours:'16:00–자정',big:false,cap:'중형(15명)',rec:'마파두부+양꼬치',desc:'서현 양꼬치 양대 산맥. 마파두부도 판매. 꼬치 가성비 우수.'},
 {name:'경성양꼬치 정자점',theme:'양꼬치',loc:'정자역',nr:4.5,rc:'리뷰 100+',hours:'영업시간 확인 필요',big:false,cap:'소형(10명)',rec:'정자 양꼬치',desc:'정자역 양꼬치. 꼬치 크기가 커서 푸짐함. 구오바로우도 맛있음.'},
@@ -368,7 +399,7 @@ const TL=[
   {l:'회·해산물',e:'🐟'},{l:'치킨',e:'🍗'},{l:'이자카야',e:'🍶'},
   {l:'중식',e:'🥢'},{l:'양꼬치',e:'🔥'},{l:'🎲랜덤',e:'🎲',isRandom:true}
 ];
-const LS=['전체','정자역','수내역','서현역'];
+const LS=['전체','정자역','수내역','판교역','서현역','미금역'];
 let sp=null,st=new Set(),sl='전체';
 
 function renderAll(){
@@ -391,7 +422,6 @@ function pp(i){
   document.querySelectorAll('.pbtn').forEach((b,j)=>b.classList.toggle('act',j===i));
   const d=document.getElementById('pind');d.textContent=`${sp.em} ${sp.cnt} 회식이군요!`;d.classList.add('on');
   document.getElementById('pn').classList.toggle('show',sp.big);
-  updateBudgetHint();
 }
 function pt(t){
   const isRand = t==='🎲랜덤';
@@ -416,7 +446,6 @@ function pt(t){
   const nowRand = st.has('🎲랜덤');
   document.querySelector('.lsec').style.display = nowRand?'none':'';
   document.querySelector('.cta').style.display   = nowRand?'none':'';
-  document.getElementById('bgsec').style.display = nowRand?'none':'';
   document.getElementById('rs').style.display    = 'none';
   document.getElementById('rs').style.display    = 'none';
   const randSec = document.getElementById('rand-sec');
@@ -575,29 +604,6 @@ function show(){
   }).join('');
 }
 // ── 예산 슬라이더 ─────────────────────────────────────────────────────────────
-let budget = 5;
-
-function updateBudget(val){
-  budget = parseInt(val);
-  const disp = budget === 10 ? '10만원' : `${budget}만원`;
-  document.getElementById('bg-display').innerHTML = `${disp} <span>/ 1인</span>`;
-  const pct = (budget-1)/9*100;
-  document.getElementById('bg-slider').style.background =
-    `linear-gradient(to right,#ff6b6b 0%,#ff6b6b ${pct}%,#e0e0e0 ${pct}%,#e0e0e0 100%)`;
-  updateBudgetHint();
-}
-
-function updateBudgetHint(){
-  const hint = document.getElementById('bg-hint');
-  if(!sp){ hint.innerHTML='인원 선택 시 총 예산도 계산해드려요 😊'; return; }
-  const counts = [3, 5, 9, 19, 29, 50];
-  const mins   = [2, 4, 6, 10, 20, 30];
-  const idx = PO.findIndex(p=>p.cnt===sp.cnt);
-  const nMin = mins[idx]||2;
-  const nMax = counts[idx]||3;
-  hint.innerHTML = `💳 <strong>${sp.cnt}</strong> 기준 총 예산 약 <strong style="color:#ff6b6b">${budget*nMin}만원 ~ ${budget*nMax}만원</strong>`;
-}
-
 // ── 따봉 (localStorage) ────────────────────────────────────────────────────────
 function getLikes(){ try{ return JSON.parse(localStorage.getItem('grc_likes')||'{}'); }catch(e){ return {}; } }
 function saveLikes(o){ try{ localStorage.setItem('grc_likes',JSON.stringify(o)); }catch(e){} }
@@ -622,11 +628,11 @@ function toggleLike(btn,name){
 function cleanQuery(name, loc){
   // 이름에서 불필요한 접미어 제거
   let q = name
-    .replace(/\s*(분당정자점|분당수내점|분당서현점)/g, '')   // 분당+점 통합 표현
-    .replace(/\s*(정자직영점|수내직영점|서현직영점)/g, '')
-    .replace(/\s*(정자본점|수내본점|서현본점)/g, '')
-    .replace(/\s*(정자점|수내점|서현점)/g, '')
-    .replace(/\s*(정자역점|수내역점|서현역점)/g, '')
+    .replace(/\s*(분당정자점|분당수내점|분당서현점|분당판교점|분당미금점)/g, '')
+    .replace(/\s*(정자직영점|수내직영점|서현직영점|판교직영점|미금직영점)/g, '')
+    .replace(/\s*(정자본점|수내본점|서현본점|판교본점|미금본점)/g, '')
+    .replace(/\s*(정자점|수내점|서현점|판교점|미금점)/g, '')
+    .replace(/\s*(정자역점|수내역점|서현역점|판교역점|미금역점)/g, '')
     .replace(/\s*분당점/g, '')
     .replace(/\s*\(한우\)/g, '')
     .replace(/\s*\(중식\)/g, '')
@@ -636,10 +642,7 @@ function cleanQuery(name, loc){
     .replace(/\s*\(냉동삼겹살\)/g, '')
     .trim();
 
-  // loc에서 "역" 제거하고 동네 이름만 추출 (정자역→정자, 수내역→수내, 서현역→서현)
   const area = loc.replace('역','');
-
-  // 이미 이름에 지역명 포함되어 있으면 지역 안 붙임
   const alreadyHasArea = q.includes(area) || q.includes('분당');
   return alreadyHasArea ? q : `${q} ${area}`;
 }
