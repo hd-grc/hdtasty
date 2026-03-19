@@ -864,8 +864,14 @@ document.getElementById('fb-submit-btn').addEventListener('click', async functio
 });
 
 // ── 관리자 모드 ───────────────────────────────────────────────────────────────
-const ADMIN_PW = 'GRC2025!';
+// 비밀번호는 SHA-256 해시로 저장 (원본 비번 노출 방지)
+const ADMIN_HASH = '5efbb4acf9b7f55d7fa6dafda85c435f444a6277c6bbfb8f898d405baa2ed610';
 let isAdmin = false;
+
+async function hashPw(pw){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
 
 document.getElementById('admin-toggle-btn').addEventListener('click', ()=>{
   if(isAdmin){
@@ -891,9 +897,10 @@ document.getElementById('admin-pw-input').addEventListener('keydown', e=>{
   if(e.key==='Enter') checkAdminPw();
 });
 
-function checkAdminPw(){
+async function checkAdminPw(){
   const pw = document.getElementById('admin-pw-input').value;
-  if(pw === ADMIN_PW){
+  const hashed = await hashPw(pw);
+  if(hashed === ADMIN_HASH){
     isAdmin = true;
     document.getElementById('admin-pw-modal').classList.remove('on');
     document.getElementById('admin-toggle-btn').classList.add('on');
