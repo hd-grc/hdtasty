@@ -73,6 +73,27 @@ h1{font-size:clamp(28px,5vw,52px);font-weight:800;line-height:1.15;letter-spacin
 .rand-card-inner{position:relative;padding:18px}
 @keyframes randIn{from{transform:translateY(20px) scale(.95);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
 
+/* BUDGET */
+.bgsec{position:relative;z-index:5;max-width:680px;margin:0 auto 36px;padding:0 20px}
+.bg-card{background:#fff;border-radius:var(--r);padding:22px 24px}
+.bg-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.bg-label{font-size:14px;font-weight:700;color:#222}
+.bg-amount{font-size:22px;font-weight:800;color:var(--accent);letter-spacing:-1px}
+.bg-amount span{font-size:13px;font-weight:600;color:#888;margin-left:4px}
+input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:100px;outline:none;cursor:pointer;background:#e0e0e0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--accent);box-shadow:0 2px 8px rgba(255,107,107,.35);cursor:pointer;transition:all .15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+.bg-ticks{display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:#aaa;font-weight:600}
+.bg-hint{font-size:12px;color:#999;margin-top:14px;text-align:center;line-height:1.6}
+.bg-ppa{display:inline-block;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);border-radius:100px;padding:4px 14px;font-size:12px;font-weight:700;color:var(--accent);margin-top:8px}
+
+/* LIKE BTN */
+.like-btn{display:flex;align-items:center;gap:5px;background:rgba(255,107,107,.08);border:1.5px solid rgba(255,107,107,.25);border-radius:100px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--accent);cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.like-btn:hover{background:rgba(255,107,107,.18);transform:scale(1.05)}
+.like-btn.liked{background:var(--accent);border-color:var(--accent);color:#fff}
+.like-btn.liked .lheart{animation:heartPop .3s ease}
+@keyframes heartPop{0%{transform:scale(1)}50%{transform:scale(1.5)}100%{transform:scale(1)}}
+
 /* LOC */
 .lsec{position:relative;z-index:5;max-width:520px;margin:0 auto 36px;padding:0 20px}
 .lgrid{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
@@ -157,6 +178,24 @@ h1{font-size:clamp(28px,5vw,52px);font-weight:800;line-height:1.15;letter-spacin
   <div class="rand-grid" id="rand-grid"></div>
 </div>
 
+<!-- STEP 2.5 예산 -->
+<div class="bgsec" id="bgsec">
+  <p class="slabel">step 2.5 — 1인당 예산이 얼마예요?</p>
+  <div class="bg-card">
+    <div class="bg-row">
+      <div class="bg-label">💰 1인당 예산</div>
+      <div class="bg-amount" id="bg-display">5만원 <span>/ 1인</span></div>
+    </div>
+    <input type="range" id="bg-slider" min="1" max="10" value="5" step="1" oninput="updateBudget(this.value)">
+    <div class="bg-ticks">
+      <span>1만원</span><span>3만원</span><span>5만원</span><span>7만원</span><span>10만원</span>
+    </div>
+    <div class="bg-hint" id="bg-hint">
+      인원 선택 시 총 예산도 계산해드려요 😊
+    </div>
+  </div>
+</div>
+
 <div class="lsec">
   <p class="slabel">step 3 — 어느 역이에요?</p>
   <div class="lgrid" id="lg"></div>
@@ -189,7 +228,7 @@ const DB = [
 {name:'돈멜 정자점',theme:'돼지구이',loc:'정자역',nr:4.6,rc:'리뷰 1,100+',hours:'화–일 17:00–23:00 / 월휴무',big:false,cap:'중형(20명)',rec:'목살+젓국 시그니처',desc:'제주식 목살+오겹살 모둠. 젓국 소스에 찍어 먹는 것이 시그니처. 맥주 아이스버킷 서빙.'},
 {name:'맛찬들 왕소금구이 정자점',theme:'돼지구이',loc:'정자역',nr:4.5,rc:'리뷰 1,500+',hours:'16:00–22:00 / 주말 12:00–22:00',big:true,cap:'대형(20~30명)',rec:'단체 회식 강추',desc:'직원이 통째로 구워주는 왕소금 삼겹살. 단체석 확보 가능.'},
 {name:'삼김화로구이 정자점',theme:'돼지구이',loc:'정자역',nr:4.5,rc:'리뷰 700+',hours:'11:30–22:00',big:false,cap:'중형(15명)',rec:'숯불 화로',desc:'숯불 화로 숙성 갈비살. 직원 처음부터 끝까지 구이.'},
-{name:'솔밧해장국 삼겹살',theme:'돼지구이',loc:'정자역',nr:4.4,rc:'리뷰 1,900+',hours:'24시간 연중무휴',big:true,cap:'대형(30명+)',rec:'24시 영업',desc:'24시간 영업. 해장국 무료 제공. 분당 삼겹살 대표 명소.'},
+{name:'솔밭해장국 삼겹살',theme:'돼지구이',loc:'정자역',nr:4.4,rc:'리뷰 1,900+',hours:'24시간 연중무휴',big:true,cap:'대형(30명+)',rec:'24시 영업',desc:'24시간 영업. 해장국 무료 제공. 분당 삼겹살 대표 명소.'},
 {name:'은박집 (냉동삼겹살)',theme:'돼지구이',loc:'정자역',nr:4.7,rc:'리뷰 600+',hours:'평일 11:30–자정 / 주말 15:00–자정',big:false,cap:'중형(15명)',rec:'레트로 감성',desc:'보성 녹차 숙성 냉동 삼겹살. 레트로 인테리어. 냉면과 조합이 시그니처.'},
 {name:'일로집 정자점',theme:'돼지구이',loc:'정자역',nr:4.5,rc:'리뷰 500+',hours:'11:00–22:00',big:false,cap:'중형(15명)',rec:'대패삼겹 전문',desc:'대패삼겹+냉면 조합 맛집. 2층 구조 좌석 넉넉. 된장찌개도 별미.'},
 {name:'홍차이나 정자점',theme:'돼지구이',loc:'정자역',nr:4.3,rc:'리뷰 800+',hours:'11:00–21:30',big:false,cap:'중형(15명)',rec:'가성비 국물',desc:'삼겹+해장국 세트. 점심 가성비 최고. 가성비를 중시하는 직장인 단골.'},
@@ -352,6 +391,7 @@ function pp(i){
   document.querySelectorAll('.pbtn').forEach((b,j)=>b.classList.toggle('act',j===i));
   const d=document.getElementById('pind');d.textContent=`${sp.em} ${sp.cnt} 회식이군요!`;d.classList.add('on');
   document.getElementById('pn').classList.toggle('show',sp.big);
+  updateBudgetHint();
 }
 function pt(t){
   const isRand = t==='🎲랜덤';
@@ -376,6 +416,8 @@ function pt(t){
   const nowRand = st.has('🎲랜덤');
   document.querySelector('.lsec').style.display = nowRand?'none':'';
   document.querySelector('.cta').style.display   = nowRand?'none':'';
+  document.getElementById('bgsec').style.display = nowRand?'none':'';
+  document.getElementById('rs').style.display    = 'none';
   document.getElementById('rs').style.display    = 'none';
   const randSec = document.getElementById('rand-sec');
   if(nowRand){
@@ -437,8 +479,8 @@ function doRandom(){
   const emojis=['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣'];
   document.getElementById('rand-grid').innerHTML = picked.slice(0,9).map((r,i)=>{
     const tc=TC[r.theme]||{bg:'rgba(255,255,255,.1)',c:'#fff',em:'🍴'};
-    const nu=`https://map.naver.com/p/search/${encodeURIComponent(r.name+' '+r.loc)}`;
-    const ku=`https://map.kakao.com/link/search/${encodeURIComponent(r.name+' '+r.loc)}`;
+    const nu=`https://map.naver.com/p/search/${encodeURIComponent(cleanQuery(r.name,r.loc))}`;
+    const ku=`https://map.kakao.com/link/search/${encodeURIComponent(cleanQuery(r.name,r.loc))}`;
     return `<div class="rand-card" style="animation-delay:${i*.06}s">
       <div class="rand-card-inner">
         <div class="rand-num">${i+1}</div>
@@ -495,8 +537,8 @@ function show(){
   document.getElementById('rg').innerHTML=list.map((r,i)=>{
     const tc=TC[r.theme]||{bg:'rgba(255,255,255,.1)',c:'#fff',em:'🍴'};
     const sb=r.big&&isBig;
-    const nu=r.nurl||`https://map.naver.com/p/search/${encodeURIComponent(r.name+' '+r.loc)}`;
-    const ku=r.kurl||`https://map.kakao.com/link/search/${encodeURIComponent(r.name+' '+r.loc)}`;
+    const nu=r.nurl||`https://map.naver.com/p/search/${encodeURIComponent(cleanQuery(r.name,r.loc))}`;
+    const ku=r.kurl||`https://map.kakao.com/link/search/${encodeURIComponent(cleanQuery(r.name,r.loc))}`;
     return `<div class="rc${sb?' bigc':''}" style="animation-delay:${i*.035}s">
       <div class="rtop">
         <div style="min-width:0;flex:1">
@@ -522,9 +564,86 @@ function show(){
           <a class="rmb kk" href="${ku}" target="_blank">K 카카오</a>
         </div>
       </div>
+      <div style="padding:10px 18px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <span style="font-size:11px;color:var(--muted)">임직원 추천</span>
+        <button class="like-btn${getLiked(r.name)?' liked':''}" onclick="toggleLike(this,'${r.name.replace(/'/g,"\\'")}')">
+          <span class="lheart">👍</span>
+          <span class="lc">${getLikeCount(r.name)}</span>
+        </button>
+      </div>
     </div>`;
   }).join('');
 }
+// ── 예산 슬라이더 ─────────────────────────────────────────────────────────────
+let budget = 5;
+
+function updateBudget(val){
+  budget = parseInt(val);
+  const disp = budget === 10 ? '10만원' : `${budget}만원`;
+  document.getElementById('bg-display').innerHTML = `${disp} <span>/ 1인</span>`;
+  const pct = (budget-1)/9*100;
+  document.getElementById('bg-slider').style.background =
+    `linear-gradient(to right,#ff6b6b 0%,#ff6b6b ${pct}%,#e0e0e0 ${pct}%,#e0e0e0 100%)`;
+  updateBudgetHint();
+}
+
+function updateBudgetHint(){
+  const hint = document.getElementById('bg-hint');
+  if(!sp){ hint.innerHTML='인원 선택 시 총 예산도 계산해드려요 😊'; return; }
+  const counts = [3, 5, 9, 19, 29, 50];
+  const mins   = [2, 4, 6, 10, 20, 30];
+  const idx = PO.findIndex(p=>p.cnt===sp.cnt);
+  const nMin = mins[idx]||2;
+  const nMax = counts[idx]||3;
+  hint.innerHTML = `💳 <strong>${sp.cnt}</strong> 기준 총 예산 약 <strong style="color:#ff6b6b">${budget*nMin}만원 ~ ${budget*nMax}만원</strong>`;
+}
+
+// ── 따봉 (localStorage) ────────────────────────────────────────────────────────
+function getLikes(){ try{ return JSON.parse(localStorage.getItem('grc_likes')||'{}'); }catch(e){ return {}; } }
+function saveLikes(o){ try{ localStorage.setItem('grc_likes',JSON.stringify(o)); }catch(e){} }
+function getLiked(name){ const k=getLikes(); return !!(k[name]&&k[name].liked); }
+function getLikeCount(name){ const k=getLikes(); return k[name]?k[name].count:0; }
+
+function toggleLike(btn,name){
+  const likes=getLikes();
+  if(!likes[name]) likes[name]={liked:false,count:0};
+  const now=!likes[name].liked;
+  likes[name].liked=now;
+  likes[name].count=Math.max(0,likes[name].count+(now?1:-1));
+  saveLikes(likes);
+  btn.classList.toggle('liked',now);
+  btn.querySelector('.lc').textContent=likes[name].count;
+  const h=btn.querySelector('.lheart');
+  h.style.animation='none';
+  requestAnimationFrame(()=>{ h.style.animation='heartPop .35s ease'; });
+}
+
+// ── 검색어 정리 (역명·점명 접미어 제거) ──────────────────────────────────────
+function cleanQuery(name, loc){
+  // 이름에서 불필요한 접미어 제거
+  let q = name
+    .replace(/\s*(분당정자점|분당수내점|분당서현점)/g, '')   // 분당+점 통합 표현
+    .replace(/\s*(정자직영점|수내직영점|서현직영점)/g, '')
+    .replace(/\s*(정자본점|수내본점|서현본점)/g, '')
+    .replace(/\s*(정자점|수내점|서현점)/g, '')
+    .replace(/\s*(정자역점|수내역점|서현역점)/g, '')
+    .replace(/\s*분당점/g, '')
+    .replace(/\s*\(한우\)/g, '')
+    .replace(/\s*\(중식\)/g, '')
+    .replace(/\s*\(이자카야\)/g, '')
+    .replace(/\s*\(대게·킹크랩\)/g, '')
+    .replace(/\s*\(숙성회코스\)/g, '')
+    .replace(/\s*\(냉동삼겹살\)/g, '')
+    .trim();
+
+  // loc에서 "역" 제거하고 동네 이름만 추출 (정자역→정자, 수내역→수내, 서현역→서현)
+  const area = loc.replace('역','');
+
+  // 이미 이름에 지역명 포함되어 있으면 지역 안 붙임
+  const alreadyHasArea = q.includes(area) || q.includes('분당');
+  return alreadyHasArea ? q : `${q} ${area}`;
+}
+
 renderAll();
 </script>
 </body>
