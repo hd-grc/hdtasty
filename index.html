@@ -210,6 +210,8 @@ const DB = [
 {name:'판교집 수내직영점',theme:'돼지구이',loc:'수내역',nr:4.6,rc:'리뷰 300+',hours:'11:00–22:00',big:false,cap:'중형(20명)',rec:'냉동삼겹 원조',desc:'수내 냉동삼겹 원조. 치즈김치볶음밥 마무리 시그니처.'},
 {name:'삼다옥 1947 수내',theme:'돼지구이',loc:'수내역',nr:4.5,rc:'리뷰 700+',hours:'11:00–23:00 / 주말 12:00–22:00',big:false,cap:'중형(15명)',rec:'제주 흑돼지 가성비',desc:'와인 BYO 가능. 고기 품질 대비 가격 합리적.'},
 {name:'마루돈가 수내점',theme:'돼지구이',loc:'수내역',nr:4.4,rc:'리뷰 700+',hours:'11:30–15:00 / 17:00–23:00',big:false,cap:'중형(20명)',rec:'양념갈비+냉면',desc:'양념갈비·목살 직원 직접 구이. 냉면 마무리 필수.'},
+{name:'먹보집',theme:'돼지구이',loc:'수내역',nr:4.6,rc:'리뷰 300+',hours:'영업시간 전화 확인',big:false,cap:'중형(15명)',rec:'수내 돼지 맛집',desc:'수내역 인근 돼지구이 맛집. 고기 품질 우수하고 반찬도 알차다는 평. 재방문율 높음.'},
+{name:'오리랑돼지랑',theme:'돼지구이',loc:'수내역',nr:4.5,rc:'리뷰 200+',hours:'영업시간 전화 확인',big:false,cap:'중형(15명)',rec:'오리+돼지 이색조합',desc:'수내역 오리+돼지구이 복합 전문점. 오리구이와 삼겹살을 함께 즐길 수 있는 이색 조합. 담백한 오리가 별미.'},
 {name:'고기를굽다 수내점',theme:'돼지구이',loc:'수내역',nr:4.4,rc:'리뷰 200+',hours:'11:00–15:00 / 17:00–23:00 / 일휴무',big:false,cap:'소형(10명)',rec:'직화 특수부위',desc:'직화 특수부위 전문. 직접 뼈 발라내 신선함 보장.'},
 {name:'생활맥주 수내골목점',theme:'돼지구이',loc:'수내역',nr:4.5,rc:'리뷰 200+',hours:'16:00–00:30',big:false,cap:'소형(10명)',rec:'골목 분위기',desc:'수내역 골목 생맥주+안주. 홍콩 골목 느낌. 드래프트 맥주 맛 최고.'},
 // 서현역
@@ -649,5 +651,228 @@ function cleanQuery(name, loc){
 
 renderAll();
 </script>
+
+<!-- ── 반영 요청 버튼 (우측 하단 고정) ── -->
+<button class="fb-btn" id="fb-open-btn" title="반영 요청하기">
+  💬<span class="fb-label">반영 요청</span>
+</button>
+
+<!-- ── 반영 요청 모달 ── -->
+<div class="fb-overlay" id="fb-overlay"></div>
+<div class="fb-modal" id="fb-modal">
+  <div class="fb-head">
+    <div>
+      <div class="fb-title">💬 반영 요청 사항</div>
+      <div class="fb-sub">추가하고 싶은 맛집이나 수정 요청을 남겨주세요!<br>관리자가 확인 후 반영합니다 😊</div>
+    </div>
+    <button class="fb-close" id="fb-close-btn">✕</button>
+  </div>
+
+  <!-- 입력 폼 -->
+  <div class="fb-form">
+    <input id="fb-name" placeholder="이름 (선택)" maxlength="20">
+    <textarea id="fb-text" placeholder="예) 수내역 OO식당 추가해주세요 / 판교역 △△ 정보가 틀렸어요 등" maxlength="300" rows="3"></textarea>
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <span class="fb-count" id="fb-charcount">0 / 300</span>
+      <button class="fb-submit" id="fb-submit-btn">✉️ 제출하기</button>
+    </div>
+  </div>
+
+  <!-- 댓글 목록 -->
+  <div class="fb-list-wrap">
+    <div class="fb-list-title">📋 요청 목록 <span id="fb-total"></span></div>
+    <div class="fb-list" id="fb-list">
+      <div class="fb-empty">아직 요청이 없어요. 첫 번째로 남겨보세요!</div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* 플로팅 버튼 */
+.fb-btn{
+  position:fixed;bottom:28px;right:24px;z-index:999;
+  display:flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,var(--accent),#ff8e53);
+  border:none;border-radius:100px;
+  padding:13px 20px;
+  font-size:14px;font-weight:800;color:#fff;
+  cursor:pointer;
+  box-shadow:0 6px 24px rgba(255,107,107,.45);
+  transition:all .2s;
+}
+.fb-btn:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 10px 32px rgba(255,107,107,.55)}
+.fb-label{white-space:nowrap}
+
+/* 오버레이 */
+.fb-overlay{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.6);backdrop-filter:blur(4px)}
+.fb-overlay.on{display:block}
+
+/* 모달 */
+.fb-modal{
+  display:none;
+  position:fixed;bottom:80px;right:24px;z-index:1001;
+  width:360px;max-width:calc(100vw - 32px);
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  animation:slideUp .25s ease;
+}
+.fb-modal.on{display:flex;flex-direction:column}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+.fb-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:20px 20px 0}
+.fb-title{font-size:16px;font-weight:800;margin-bottom:4px}
+.fb-sub{font-size:11px;color:var(--muted);line-height:1.5}
+.fb-close{background:var(--card2);border:1px solid var(--border);color:var(--muted);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.fb-close:hover{color:var(--text);border-color:var(--accent)}
+
+/* 입력 폼 */
+.fb-form{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+.fb-form input,.fb-form textarea{
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:10px;padding:10px 12px;
+  font-size:13px;color:var(--text);font-family:inherit;
+  resize:none;outline:none;transition:border-color .15s;
+  width:100%;
+}
+.fb-form input::placeholder,.fb-form textarea::placeholder{color:var(--muted)}
+.fb-form input:focus,.fb-form textarea:focus{border-color:var(--accent)}
+.fb-count{font-size:11px;color:var(--muted)}
+.fb-submit{
+  background:linear-gradient(135deg,var(--accent),#ff8e53);
+  border:none;border-radius:100px;padding:8px 18px;
+  font-size:13px;font-weight:800;color:#fff;cursor:pointer;
+  transition:all .15s;
+}
+.fb-submit:hover{opacity:.85;transform:translateY(-1px)}
+
+/* 목록 */
+.fb-list-wrap{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.fb-list-title{padding:12px 20px 8px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.5px}
+.fb-list{flex:1;overflow-y:auto;max-height:280px;padding:0 20px 16px;display:flex;flex-direction:column;gap:10px}
+.fb-list::-webkit-scrollbar{width:4px}
+.fb-list::-webkit-scrollbar-track{background:transparent}
+.fb-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:100px}
+.fb-empty{font-size:13px;color:var(--muted);text-align:center;padding:24px 0}
+.fb-item{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;animation:fadeUp .2s ease}
+.fb-item-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.fb-item-name{font-size:12px;font-weight:700;color:var(--accent)}
+.fb-item-date{font-size:10px;color:var(--muted)}
+.fb-item-text{font-size:13px;color:var(--text);line-height:1.5;word-break:break-all}
+.fb-total-badge{display:inline-flex;align-items:center;background:var(--card2);border:1px solid var(--border);border-radius:100px;padding:1px 8px;font-size:11px;font-weight:600;color:var(--muted);margin-left:6px}
+.fb-toast{position:fixed;bottom:90px;right:24px;z-index:1002;background:#222;color:#fff;border-radius:100px;padding:10px 20px;font-size:13px;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,.4);animation:toastIn .3s ease;pointer-events:none}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:480px){
+  .fb-modal{bottom:76px;right:12px;left:12px;width:auto}
+  .fb-btn{bottom:20px;right:16px;padding:11px 16px;font-size:13px}
+}
+</style>
+
+<!-- Firebase CDN -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+// ── Firebase 초기화 ───────────────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyC2oxWmN8fx_0KTdpkBxEdrQIZX7_N58EE",
+  authDomain: "hdtasty-4e96c.firebaseapp.com",
+  projectId: "hdtasty-4e96c",
+  storageBucket: "hdtasty-4e96c.firebasestorage.app",
+  messagingSenderId: "511448192329",
+  appId: "1:511448192329:web:5b57a6bd44372626d43698"
+};
+firebase.initializeApp(firebaseConfig);
+const db  = firebase.firestore();
+const COL = db.collection('feedback');
+
+// ── 열기 / 닫기 ───────────────────────────────────────────────────────────────
+function openFb(){
+  document.getElementById('fb-overlay').classList.add('on');
+  document.getElementById('fb-modal').classList.add('on');
+  loadFbList();
+}
+function closeFb(){
+  document.getElementById('fb-overlay').classList.remove('on');
+  document.getElementById('fb-modal').classList.remove('on');
+}
+
+document.getElementById('fb-open-btn').addEventListener('click', openFb);
+document.getElementById('fb-close-btn').addEventListener('click', closeFb);
+document.getElementById('fb-overlay').addEventListener('click', closeFb);
+
+// ── 글자 수 카운트 ────────────────────────────────────────────────────────────
+document.getElementById('fb-text').addEventListener('input', function(){
+  document.getElementById('fb-charcount').textContent = this.value.length + ' / 300';
+});
+
+// ── 제출 ──────────────────────────────────────────────────────────────────────
+document.getElementById('fb-submit-btn').addEventListener('click', async function(){
+  const name = document.getElementById('fb-name').value.trim() || '익명';
+  const text = document.getElementById('fb-text').value.trim();
+  if(!text){ showToast('내용을 입력해주세요!'); return; }
+
+  this.disabled = true;
+  this.textContent = '전송 중...';
+
+  try{
+    await COL.add({ name, text, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+    document.getElementById('fb-name').value = '';
+    document.getElementById('fb-text').value = '';
+    document.getElementById('fb-charcount').textContent = '0 / 300';
+    showToast('✅ 요청이 등록됐어요!');
+    loadFbList();
+  } catch(e){
+    showToast('❌ 등록 실패. 다시 시도해주세요.');
+    console.error(e);
+  } finally {
+    this.disabled = false;
+    this.textContent = '✉️ 제출하기';
+  }
+});
+
+// ── 목록 불러오기 ─────────────────────────────────────────────────────────────
+async function loadFbList(){
+  const list  = document.getElementById('fb-list');
+  const total = document.getElementById('fb-total');
+  list.innerHTML = '<div class="fb-empty">불러오는 중...</div>';
+
+  try{
+    const snap = await COL.orderBy('createdAt','desc').get();
+    total.innerHTML = `<span class="fb-total-badge">${snap.size}건</span>`;
+
+    if(snap.empty){
+      list.innerHTML = '<div class="fb-empty">아직 요청이 없어요. 첫 번째로 남겨보세요!</div>';
+      return;
+    }
+    list.innerHTML = snap.docs.map(d=>{
+      const r  = d.data();
+      const dt = r.createdAt
+        ? r.createdAt.toDate().toLocaleDateString('ko-KR',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})
+        : '방금';
+      return `
+        <div class="fb-item">
+          <div class="fb-item-top">
+            <span class="fb-item-name">👤 ${r.name}</span>
+            <span class="fb-item-date">${dt}</span>
+          </div>
+          <div class="fb-item-text">${r.text.replace(/</g,'&lt;')}</div>
+        </div>`;
+    }).join('');
+  } catch(e){
+    list.innerHTML = '<div class="fb-empty">불러오기 실패. 잠시 후 다시 시도해주세요.</div>';
+    console.error(e);
+  }
+}
+
+// ── 토스트 ────────────────────────────────────────────────────────────────────
+function showToast(msg){
+  const t = document.createElement('div');
+  t.className = 'fb-toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 2500);
+}
+</script>
+
 </body>
 </html>
