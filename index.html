@@ -161,15 +161,69 @@ h1{font-size:clamp(28px,5vw,52px);font-weight:800;line-height:1.15;letter-spacin
   .lbtn{font-size:11px;padding:8px 4px}
   .rgrid{grid-template-columns:1fr}
 }
+/* ── 탭 네비게이션 ── */
+.tab-nav{position:relative;z-index:10;display:flex;justify-content:center;gap:8px;padding:0 20px 32px;flex-wrap:wrap}
+.tab-btn{display:flex;align-items:center;gap:7px;background:#fff;border:2px solid #ddd;border-radius:100px;padding:11px 22px;font-size:14px;font-weight:700;color:#555;cursor:pointer;transition:all .2s}
+.tab-btn:hover{border-color:#6366f1;background:#f5f3ff;transform:translateY(-2px)}
+.tab-btn.act{border-color:#6366f1;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;box-shadow:0 6px 20px rgba(99,102,241,.35)}
+.tab-content{display:none}.tab-content.act{display:block}
+/* ── 셔틀버스 ── */
+.bus-wrap{max-width:860px;margin:0 auto;padding:0 20px 80px}
+.bus-hero{text-align:center;margin-bottom:32px}
+.bus-title{font-size:clamp(22px,4vw,38px);font-weight:800;letter-spacing:-1px;margin-bottom:8px}
+.bus-sub{font-size:14px;color:var(--muted)}
+.bus-search-box{background:#fff;border-radius:20px;padding:20px;margin-bottom:28px}
+.bus-search-row{display:flex;gap:10px}
+.bus-input{flex:1;border:2px solid #e0e0e0;border-radius:100px;padding:13px 20px;font-size:15px;font-weight:600;outline:none;transition:border-color .2s;font-family:inherit;color:#222}
+.bus-input:focus{border-color:#6366f1}
+.bus-search-btn{background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:100px;padding:13px 24px;font-size:14px;font-weight:800;color:#fff;cursor:pointer;white-space:nowrap;transition:all .2s;box-shadow:0 4px 16px rgba(99,102,241,.35)}
+.bus-search-btn:hover{transform:translateY(-2px)}
+.bus-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.bus-chip{background:#f3f4f6;border:1px solid #e5e7eb;border-radius:100px;padding:5px 14px;font-size:12px;font-weight:600;color:#555;cursor:pointer;transition:all .15s}
+.bus-chip:hover{background:#ede9fe;border-color:#6366f1;color:#6366f1}
+.bus-result{display:flex;flex-direction:column;gap:14px}
+.bus-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;animation:fu .3s ease both}
+.bus-card-head{padding:16px 18px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid var(--border)}
+.bus-card-title{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px}
+.bus-badge{display:inline-flex;align-items:center;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:100px;padding:2px 10px;font-size:11px;font-weight:700;color:#6366f1}
+.bus-badge.direct{background:rgba(3,199,90,.12);border-color:rgba(3,199,90,.3);color:#03c75a}
+.bus-times{display:flex;flex-wrap:wrap;gap:8px;padding:14px 18px}
+.bus-time{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700;text-align:center;min-width:60px}
+.bus-time.next{border-color:#6366f1;background:rgba(99,102,241,.15);color:#a5b4fc}
+.bus-time.passed{opacity:.3}
+.bus-stops{padding:0 18px 14px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.bus-stop{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.bus-stop-me{font-weight:800;color:#a5b4fc;font-size:13px}
+.bus-stop-arrow{color:var(--border)}
+.transfer-card{background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.05));border:1px solid rgba(99,102,241,.2);border-radius:16px;padding:16px 18px;animation:fu .3s ease .1s both}
+.transfer-title{font-size:13px;font-weight:700;color:#a5b4fc;margin-bottom:10px}
+.transfer-route{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.transfer-step{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:12px;font-weight:700}
+.transfer-arrow{color:var(--muted);font-size:16px}
+.line-badge{display:inline-flex;align-items:center;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:800;color:#fff;margin-left:6px}
+.bus-msg{text-align:center;padding:48px 20px;color:var(--muted)}
+.bus-msg-icon{font-size:48px;margin-bottom:12px}
+.bus-msg-text{font-size:14px;line-height:1.8}
+.bus-now-bar{background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);border-radius:12px;padding:10px 16px;margin-bottom:20px;font-size:12px;color:#a5b4fc;font-weight:600;text-align:center}
+@media(max-width:600px){.bus-search-row{flex-direction:column}.bus-search-btn{border-radius:12px}}
 </style>
 </head>
 <body>
 <header>
-  <div class="logo-tag">🍽️ 회식 어디가지?</div>
-  <h1>GRC 회식 맛집 추천</h1>
-  <p class="sub">인원수와 테마만 선택하면 딱 맞는 곳 바로 추천!</p>
-  <div class="dbadge">✅ 네이버지도 · 카카오맵 평점 상위 기준</div>
+  <div class="logo-tag">🍽️ GRC 임직원 편의</div>
+  <h1>GRC 임직원 서비스</h1>
+  <p class="sub">맛집 추천부터 퇴근버스까지, 한 곳에서!</p>
+  <div class="dbadge">✅ HD현대중공업 GRC 사옥 전용</div>
 </header>
+
+<!-- 탭 네비게이션 -->
+<nav class="tab-nav">
+  <button class="tab-btn act" onclick="switchTab('food')">🍽️ 회식 맛집</button>
+  <button class="tab-btn" onclick="switchTab('bus')">🚌 퇴근 버스</button>
+</nav>
+
+<!-- 맛집 탭 -->
+<div class="tab-content act" id="tab-food">
 
 <div class="psec">
   <p class="slabel">step 1 — 몇 명이에요?</p>
@@ -234,6 +288,30 @@ h1{font-size:clamp(28px,5vw,52px);font-weight:800;line-height:1.15;letter-spacin
   </div>
   <div class="rgrid" id="rg"></div>
 </div>
+
+</div><!-- /tab-food -->
+
+<!-- 퇴근버스 탭 -->
+<div class="tab-content" id="tab-bus">
+<div class="bus-wrap">
+  <div class="bus-hero">
+    <div style="font-size:48px;margin-bottom:12px">🚌</div>
+    <div class="bus-title">GRC 퇴근 버스</div>
+    <div class="bus-sub">목적지를 입력하면 탈 수 있는 버스를 찾아드려요</div>
+  </div>
+
+  <div class="bus-search-box">
+    <div class="bus-search-row">
+      <input class="bus-input" id="bus-input" placeholder="예) 마장역, 강남역, 잠실..." maxlength="20">
+      <button class="bus-search-btn" onclick="searchBus()">🔍 검색</button>
+    </div>
+    <div class="bus-chips" id="bus-chips"></div>
+  </div>
+
+  <div id="bus-now-bar" class="bus-now-bar" style="display:none"></div>
+  <div class="bus-result" id="bus-result"></div>
+</div>
+</div><!-- /tab-bus -->
 
 <script>
 // ★ 평점(nr) 내림차순 정렬 · 중복 없음 · 각 역+테마별 풍부한 데이터
@@ -703,6 +781,275 @@ function cleanQuery(name, loc){
 }
 
 renderAll();
+
+// ══════════════════════════════════════════════════════════════════════════════
+// 탭 전환
+// ══════════════════════════════════════════════════════════════════════════════
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('act'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('act'));
+  document.getElementById('tab-'+tab).classList.add('act');
+  document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('act');
+  if(tab==='bus') initBus();
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// 퇴근버스 데이터
+// ══════════════════════════════════════════════════════════════════════════════
+const BUSES = [
+  {id:'퇴근1',name:'퇴근1 (천호)',times:['17:20','18:00','19:30'],stops:['석촌','잠실','천호']},
+  {id:'퇴근2',name:'퇴근2 (왕십리)',times:['17:20','18:00','19:30'],stops:['왕십리']},
+  {id:'퇴근3-a',name:'퇴근3 (DMC·대곡)',times:['17:30'],stops:['가좌','디지털미디어시티','대곡']},
+  {id:'퇴근3-b',name:'퇴근3 (공덕·DMC·대곡)',times:['19:30'],stops:['공덕','디지털미디어시티','대곡']},
+  {id:'퇴근3-c',name:'퇴근3 (공덕직행)',times:['17:20'],stops:['충정로','공덕']},
+  {id:'퇴근4',name:'퇴근4 (신도림)',times:['17:20','18:00','19:30'],stops:['신도림']},
+  {id:'퇴근5-a',name:'퇴근5 (송내·상동)',times:['18:00','19:30'],stops:['송내남부','상동']},
+  {id:'퇴근5-b',name:'퇴근5 (온수)',times:['17:20'],stops:['온수']},
+  {id:'퇴근6',name:'퇴근6 (충무로)',times:['17:30','17:45','18:00','19:30'],stops:['충무로']},
+  {id:'퇴근7',name:'퇴근7 (사당·이수)',times:['17:30','18:10','19:40'],stops:['사당','이수']},
+  {id:'퇴근8',name:'퇴근8 (고속터미널)',times:['17:30','18:10'],stops:['고속버스터미널']},
+  {id:'퇴근9',name:'퇴근9 (기흥)',times:['17:30','18:10','19:40'],stops:['신갈','기흥']},
+  {id:'퇴근10',name:'퇴근10 (동탄)',times:['17:30','18:30'],stops:['동탄']},
+  {id:'퇴근11-a',name:'퇴근11 (송도)',times:['17:20','18:30'],stops:['인천대입구','센트럴파크']},
+  {id:'퇴근11-b',name:'퇴근11 (인천)',times:['17:45'],stops:['인천터미널','인천시청']},
+  {id:'퇴근12',name:'퇴근12 (청라)',times:['18:30'],stops:['가정']},
+  {id:'퇴근13',name:'퇴근13 (양재·강남·신논현)',times:['16:40'],stops:['양재','강남','신논현']},
+  {id:'퇴근14',name:'퇴근14 (사당·이수)',times:['16:40'],stops:['사당','이수']},
+  {id:'퇴근15',name:'퇴근15 (약수·충무로)',times:['16:40'],stops:['약수','충무로']},
+  {id:'퇴근18',name:'퇴근18 (인덕원·평촌·범계·금정)',times:['16:40'],stops:['인덕원','평촌','범계','금정']},
+  {id:'퇴근19',name:'퇴근19 (안양)',times:['17:45'],stops:['인덕원','평촌','범계','금정']},
+  {id:'퇴근20',name:'퇴근20 (화서·수원)',times:['17:45'],stops:['화서','수원']},
+  {id:'퇴근21',name:'퇴근21 (당산·마곡)',times:['17:45'],stops:['당산','마곡']},
+  {id:'퇴근22',name:'퇴근22 (신림)',times:['17:30'],stops:['낙성대','서울대입구','봉천','신림']},
+  {id:'퇴근23',name:'퇴근23 (강남)',times:['18:30'],stops:['양재','강남','신논현','논현','신사']},
+  {id:'퇴근23-1',name:'퇴근23-1 (강남)',times:['17:30'],stops:['양재','강남','신논현','논현','신사']},
+  {id:'퇴근24',name:'퇴근24 (감일·위례)',times:['17:20'],stops:['남위례','거여','감일']},
+  {id:'퇴근25',name:'퇴근25 (망포·영통)',times:['18:10'],stops:['청명','영통','망포','수원']},
+  {id:'퇴근25-1',name:'퇴근25-1 (망포·영통)',times:['16:40','17:20'],stops:['청명','영통','망포','수원']},
+  {id:'퇴근26',name:'퇴근26 (광교·수지)',times:['18:10'],stops:['수지구청','성복','상현','광교중앙']},
+  {id:'퇴근26-1',name:'퇴근26-1 (광교·수지)',times:['17:30'],stops:['수지구청','성복','상현','광교중앙']},
+  {id:'퇴근27',name:'퇴근27 (매교·수원)',times:['17:20'],stops:['수원시청','매교','수원']},
+  {id:'퇴근28',name:'퇴근28 (동백)',times:['18:00'],stops:['동백']},
+  {id:'퇴근29',name:'퇴근29 (노원)',times:['17:45'],stops:['태릉입구','하계','노원']},
+];
+
+// 환승 데이터: 각 정차역에서 탈 수 있는 지하철 노선 + 주요 도달 가능역 (5정거장 이내)
+const TRANSFER = {
+  '석촌':     {lines:['8호선','9호선'], reach:['잠실','가락시장','올림픽공원','고속버스터미널','봉은사']},
+  '잠실':     {lines:['2호선','8호선'], reach:['건대입구','성수','왕십리','홍대입구','구로디지털단지','방배','강남','삼성','선릉','군자','장한평','답십리','마장','신설동']},
+  '천호':     {lines:['5호선','8호선'], reach:['강동','길동','굽은다리','명일','고덕','암사','마장','답십리','장한평','군자','아차산','광나루']},
+  '왕십리':   {lines:['2호선','5호선','경의중앙선','분당선'], reach:['마장','답십리','장한평','군자','행당','한양대','뚝섬','성수','건대입구','신금호','청구','신당','동대문','상왕십리']},
+  '가좌':     {lines:['경의중앙선'], reach:['디지털미디어시티','수색','능곡','강매','행신']},
+  '디지털미디어시티':{lines:['6호선','공항철도'], reach:['가좌','수색','증산','새절','구산','연신내','불광','상암']},
+  '대곡':     {lines:['경의중앙선','3호선'], reach:['능곡','행신','화전','강매','백마','곡산','원당','화정','삼송']},
+  '공덕':     {lines:['5호선','6호선','경의중앙선','공항철도'], reach:['마포','애오개','충정로','서울역','여의도','당산','디지털미디어시티']},
+  '충정로':   {lines:['2호선','5호선'], reach:['아현','이대','신촌','홍대입구','합정','서울역','서대문','광화문','을지로입구']},
+  '신도림':   {lines:['1호선','2호선'], reach:['구로','가산디지털단지','금천구청','독산','시흥','영등포','양평','당산','합정','홍대입구','신길','대림','봉천','신림']},
+  '송내남부':  {lines:['1호선'], reach:['부천','중동','소사','역곡','오류동','온수','광명','구일']},
+  '상동':     {lines:['7호선'], reach:['부천시청','춘의','신중동','부천','까치울','온수','천왕','광명사거리']},
+  '온수':     {lines:['1호선','7호선'], reach:['역곡','오류동','개봉','구일','천왕','광명사거리','철산','가산디지털단지']},
+  '충무로':   {lines:['3호선','4호선'], reach:['동대입구','약수','금호','옥수','이촌','동작','사당','낙성대','서울대입구','봉천','신림','명동','회현','서울역','을지로3가']},
+  '약수':     {lines:['3호선','6호선'], reach:['금호','옥수','이촌','동작','충무로','동대입구','청구','신당','버티고개','한강진']},
+  '사당':     {lines:['2호선','4호선'], reach:['낙성대','서울대입구','봉천','신림','방배','서초','강남','이수','총신대입구','동작','이대','신촌']},
+  '이수':     {lines:['4호선','7호선'], reach:['총신대입구','동작','사당','남성','숭실대입구','상도','장승배기','신대방삼거리','보라매']},
+  '고속버스터미널':{lines:['3호선','7호선','9호선'], reach:['교대','남부터미널','양재','매봉','도곡','강남','반포','논현','신논현','고속터미널','잠원','신사']},
+  '신갈':     {lines:['경강선'], reach:['기흥','구성','보정','죽전','미금','정자','수내']},
+  '기흥':     {lines:['경강선','에버라인'], reach:['신갈','보라매','강남대','지석','어정','동백']},
+  '동탄':     {lines:['SRT','GTX-A'], reach:['수서','동탄']},
+  '인천대입구':{lines:['인천1호선'], reach:['센트럴파크','국제업무지구','인천터미널','예술회관','인천시청']},
+  '센트럴파크':{lines:['인천1호선'], reach:['인천대입구','국제업무지구','인천터미널']},
+  '인천터미널':{lines:['인천1호선'], reach:['예술회관','인천시청','부평구청','갈산','신나무실']},
+  '인천시청':  {lines:['인천1호선'], reach:['예술회관','인천터미널','부평구청']},
+  '가정':     {lines:['인천2호선'], reach:['서구청','석남','인천시청','주안','인하대']},
+  '양재':     {lines:['3호선','신분당선'], reach:['매봉','도곡','대치','학여울','대청','일원','수서','고속버스터미널','교대','남부터미널','강남','판교','정자']},
+  '강남':     {lines:['2호선','신분당선'], reach:['역삼','선릉','삼성','종합운동장','잠실','교대','서초','방배','사당','신논현','양재','판교']},
+  '신논현':   {lines:['9호선','신분당선'], reach:['신사','논현','언주','선정릉','삼성중앙','봉은사','종합운동장','강남','양재']},
+  '논현':     {lines:['7호선'], reach:['학동','강남구청','청담','뚝섬유원지','건대입구','이수','반포','고속버스터미널']},
+  '신사':     {lines:['3호선'], reach:['압구정','학동','매봉','도곡','대치','잠원','고속버스터미널','교대']},
+  '인덕원':   {lines:['4호선'], reach:['평촌','범계','금정','산본','수리산','대야미','수원','경마공원','의왕']},
+  '평촌':     {lines:['4호선'], reach:['인덕원','범계','금정','산본','수원','안양']},
+  '범계':     {lines:['4호선'], reach:['평촌','금정','산본','인덕원','안양','수원']},
+  '금정':     {lines:['1호선','4호선'], reach:['범계','산본','의왕','군포','당정','수리산','안양','명학']},
+  '화서':     {lines:['1호선'], reach:['수원','세류','성균관대','화서','북수원']},
+  '수원':     {lines:['1호선','분당선','수인선'], reach:['화서','세류','수원시청','매교','고색','오목천','어천','수원']},
+  '당산':     {lines:['2호선','9호선'], reach:['영등포구청','문래','신도림','합정','홍대입구','여의도','국회의사당','노량진']},
+  '마곡':     {lines:['5호선','공항철도'], reach:['발산','우장산','화곡','강서','개화산','김포공항','디지털미디어시티']},
+  '낙성대':   {lines:['2호선'], reach:['서울대입구','봉천','신림','신대방','사당','방배','서초','강남']},
+  '서울대입구':{lines:['2호선'], reach:['낙성대','봉천','신림','신대방','사당','방배']},
+  '봉천':     {lines:['2호선'], reach:['서울대입구','신림','신대방','낙성대']},
+  '신림':     {lines:['2호선','신림선'], reach:['봉천','신대방','대림','구로디지털단지','신림역','관악산','당곡','서원']},
+  '남위례':   {lines:['8호선'], reach:['산성','남한산성입구','단대오거리','신흥','수진','모란']},
+  '거여':     {lines:['5호선'], reach:['마천','강동','천호','굽은다리','명일','고덕','암사']},
+  '감일':     {lines:['9호선'], reach:['위례','남위례']},
+  '청명':     {lines:['분당선'], reach:['영통','망포','수원','수원시청','매탄권선']},
+  '영통':     {lines:['분당선'], reach:['청명','망포','수원','수원시청']},
+  '망포':     {lines:['분당선','수인선'], reach:['영통','청명','수원','고색','오목천']},
+  '수지구청':  {lines:['분당선'], reach:['성복','상현','광교중앙','광교','죽전','보정','기흥']},
+  '성복':     {lines:['분당선'], reach:['수지구청','상현','광교중앙','광교']},
+  '상현':     {lines:['분당선'], reach:['성복','광교중앙','광교','수지구청']},
+  '광교중앙':  {lines:['신분당선','분당선'], reach:['광교','수지구청','성복','상현','동천','미금','정자','강남']},
+  '수원시청':  {lines:['분당선'], reach:['수원','매교','정자역','청명','영통']},
+  '매교':     {lines:['수인선'], reach:['수원시청','수원','고색','오목천']},
+  '동백':     {lines:['에버라인'], reach:['기흥','보라매','강남대','지석','어정']},
+  '태릉입구':  {lines:['6호선','7호선'], reach:['석계','광운대','월계','하계','노원','중계','상계','공릉','봉화산']},
+  '하계':     {lines:['7호선'], reach:['노원','중계','상계','태릉입구','공릉','먹골','중화']},
+  '노원':     {lines:['4호선','7호선'], reach:['상계','당고개','하계','중계','태릉입구','창동','도봉산','수락산']},
+};
+
+// 인기 검색어
+const POPULAR_STATIONS = ['강남','잠실','사당','왕십리','신도림','충무로','천호','노원','수원','판교'];
+
+function initBus(){
+  // 현재 시각 표시
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'});
+  const bar = document.getElementById('bus-now-bar');
+  bar.style.display='block';
+  bar.textContent = `🕐 현재 시각 ${timeStr} 기준으로 운행 시간을 표시해요`;
+
+  // 인기 검색어 칩
+  document.getElementById('bus-chips').innerHTML =
+    POPULAR_STATIONS.map(s=>`<span class="bus-chip" onclick="busChipSearch('${s}')">${s}</span>`).join('');
+
+  // 엔터키 검색
+  const inp = document.getElementById('bus-input');
+  inp.addEventListener('keydown', e=>{ if(e.key==='Enter') searchBus(); });
+}
+
+function busChipSearch(s){
+  document.getElementById('bus-input').value = s;
+  searchBus();
+}
+
+function getNowMinutes(){
+  const n = new Date();
+  return n.getHours()*60 + n.getMinutes();
+}
+function timeToMin(t){ const [h,m]=t.split(':').map(Number); return h*60+m; }
+
+function searchBus(){
+  const query = document.getElementById('bus-input').value.trim()
+    .replace(/역$/,'').replace(/\s/g,'');
+  if(!query){ return; }
+
+  const resultEl = document.getElementById('bus-result');
+  const nowMin = getNowMinutes();
+
+  // 1. 직통 버스 찾기
+  const directBuses = BUSES.filter(b=>
+    b.stops.some(s=>s.replace(/\s/g,'').includes(query) || query.includes(s.replace(/\s/g,'')))
+  );
+
+  if(directBuses.length > 0){
+    resultEl.innerHTML = directBuses.map((b,i)=>{
+      const myStop = b.stops.find(s=>s.replace(/\s/g,'').includes(query)||query.includes(s.replace(/\s/g,'')));
+      const stopsHtml = b.stops.map(s=>`
+        <span class="bus-stop">
+          <span class="bus-stop-dot"></span>
+          <span class="${s===myStop?'bus-stop-me':''}">${s}${s===myStop?'역 ✅':''}</span>
+        </span>
+        ${b.stops.indexOf(s)<b.stops.length-1?'<span class="bus-stop-arrow">›</span>':''}
+      `).join('');
+
+      const timesHtml = b.times.map(t=>{
+        const tMin = timeToMin(t);
+        const diff = tMin - nowMin;
+        let cls='', label='';
+        if(diff < -10) cls='passed', label=t;
+        else if(diff >= -10 && diff <= 60) cls='next', label=`${t} ⚡`;
+        else label=t;
+        return `<div class="bus-time ${cls}">${label}</div>`;
+      }).join('');
+
+      return `<div class="bus-card" style="animation-delay:${i*.08}s">
+        <div class="bus-card-head">
+          <div class="bus-card-title">🚌 ${b.name}</div>
+          <span class="bus-badge direct">✅ 직통</span>
+        </div>
+        <div class="bus-times">${timesHtml}</div>
+        <div class="bus-stops">${stopsHtml}</div>
+      </div>`;
+    }).join('');
+    return;
+  }
+
+  // 2. 환승 추천 (5정거장 이내)
+  let transfers = [];
+  for(const b of BUSES){
+    for(const stop of b.stops){
+      const tInfo = TRANSFER[stop];
+      if(!tInfo) continue;
+      const reachable = tInfo.reach.find(r=>
+        r.replace(/\s/g,'').includes(query)||query.includes(r.replace(/\s/g,''))
+      );
+      if(reachable){
+        const alreadyStop = transfers.find(t=>t.busId===b.id && t.stop===stop);
+        if(!alreadyStop) transfers.push({bus:b, stop, lines:tInfo.lines, dest:reachable});
+      }
+    }
+  }
+
+  if(transfers.length > 0){
+    // 중복 버스 제거 (같은 버스 노선 첫 번째만)
+    const seen = new Set();
+    transfers = transfers.filter(t=>{
+      if(seen.has(t.bus.id)) return false;
+      seen.add(t.bus.id);
+      return true;
+    });
+
+    resultEl.innerHTML = `
+      <div class="transfer-card" style="margin-bottom:6px">
+        <div class="transfer-title">🔄 ${query}역 직통버스는 없지만, 환승으로 갈 수 있어요!</div>
+      </div>
+    ` + transfers.slice(0,4).map((t,i)=>{
+      const timesHtml = t.bus.times.map(tm=>{
+        const diff = timeToMin(tm) - nowMin;
+        let cls='', label=tm;
+        if(diff < -10) cls='passed';
+        else if(diff >= -10 && diff <= 60) cls='next', label=`${tm} ⚡`;
+        return `<div class="bus-time ${cls}">${label}</div>`;
+      }).join('');
+
+      const lineColors = {'1호선':'#0052A4','2호선':'#009246','3호선':'#EF7C1C','4호선':'#00A2D1','5호선':'#996CAC','6호선':'#CD7C2F','7호선':'#747F00','8호선':'#E6186C','9호선':'#BDB092','경의중앙선':'#77C4A3','분당선':'#F5A200','신분당선':'#D4003B','공항철도':'#0065B3','경강선':'#003DA5','수인선':'#F5A200','인천1호선':'#7CA8D5','인천2호선':'#ED8B00','에버라인':'#52AE4C','신림선':'#6789CA','GTX-A':'#9C4199'};
+      const linesHtml = t.lines.map(l=>`<span class="line-badge" style="background:${lineColors[l]||'#888'}">${l}</span>`).join('');
+
+      return `<div class="bus-card" style="animation-delay:${i*.08}s">
+        <div class="bus-card-head">
+          <div class="bus-card-title">🚌 ${t.bus.name}</div>
+          <span class="bus-badge">🔄 환승</span>
+        </div>
+        <div class="bus-times">${timesHtml}</div>
+        <div style="padding:10px 18px 14px">
+          <div class="transfer-route">
+            <div class="transfer-step">🚌 GRC 사옥 출발</div>
+            <div class="transfer-arrow">→</div>
+            <div class="transfer-step">📍 ${t.stop}역 하차</div>
+            <div class="transfer-arrow">→</div>
+            <div class="transfer-step">${linesHtml} 환승</div>
+            <div class="transfer-arrow">→</div>
+            <div class="transfer-step">🎯 ${query}역 도착</div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    return;
+  }
+
+  // 3. 없음
+  resultEl.innerHTML = `
+    <div class="bus-msg">
+      <div class="bus-msg-icon">😢</div>
+      <div class="bus-msg-text">
+        <strong>${query}역</strong>으로 가는 직통 버스나<br>
+        5정거장 이내 환승 노선이 없어요.<br><br>
+        💬 <strong>퇴근버스 노선 확충을 요청</strong>해 보세요!<br>
+        우측 하단 반영 요청 버튼을 이용해주세요 😊
+      </div>
+    </div>`;
+}
+window.searchBus = searchBus;
+window.busChipSearch = busChipSearch;
 </script>
 
 <!-- ── 수다방 버튼 (우측 하단 고정, 반영요청 위) ── -->
