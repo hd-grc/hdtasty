@@ -929,6 +929,11 @@ function getTomorrowMsg(){
   return '😅 오늘은 모든 버스가 출발했어요. 내일 서두르면 탈 수 있어요! 💪';
 }
 
+function isNoNextBus(){
+  // 금요일 퇴근 후 or 주말이면 다음 영업일 버스 없음
+  const day = new Date().getDay();
+  return day === 0 || day === 6 || day === 5;
+}
 function isWeekend(){
   const day = new Date().getDay();
   return day === 0 || day === 6;
@@ -997,7 +1002,7 @@ function searchBus(){
       return `<div class="bus-card" style="animation-delay:${i*.08}s">
         <div class="bus-card-head">
           <div class="bus-card-title">🚌 ${b.name}</div>
-          <span class="bus-badge direct">${allPassed ? '⏰ 내일 운행' : '✅ 직통'}</span>
+          <span class="bus-badge direct">${allPassed ? (isNoNextBus() ? '✅ 직통' : '⏰ 내일 운행') : '✅ 직통'}</span>
         </div>
         <div class="bus-times">${timesHtml}</div>
         <div class="bus-stops">${stopsHtml}</div>
@@ -1057,7 +1062,7 @@ function searchBus(){
       return `<div class="bus-card" style="animation-delay:${i*.08}s">
         <div class="bus-card-head">
           <div class="bus-card-title">🚌 ${t.bus.name}</div>
-          <span class="bus-badge">${allPassed2 ? '⏰ 내일 운행' : '🔄 환승'}</span>
+          <span class="bus-badge">${allPassed2 ? (isNoNextBus() ? '🔄 환승' : '⏰ 내일 운행') : '🔄 환승'}</span>
         </div>
         <div class="bus-times">${timesHtml}</div>
         <div style="padding:10px 18px 14px">
