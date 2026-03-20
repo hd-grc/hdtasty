@@ -557,7 +557,8 @@ function doRandom(){
   }).join('');
 }
 
-function show(){
+async function show(){
+  await loadAllLikes(); // 최신 따봉 수 반영
   let list=[...DB];
   if(st.size>0) list=list.filter(r=>st.has(r.theme));
   if(sl!=='전체') list=list.filter(r=>r.loc===sl);
@@ -629,26 +630,69 @@ function show(){
     </div>`;
   }).join('');
 }
-// ── 예산 슬라이더 ─────────────────────────────────────────────────────────────
-// ── 따봉 (localStorage) ────────────────────────────────────────────────────────
-function getLikes(){ try{ return JSON.parse(localStorage.getItem('grc_likes')||'{}'); }catch(e){ return {}; } }
-function saveLikes(o){ try{ localStorage.setItem('grc_likes',JSON.stringify(o)); }catch(e){} }
-function getLiked(name){ const k=getLikes(); return !!(k[name]&&k[name].liked); }
-function getLikeCount(name){ const k=getLikes(); return k[name]?k[name].count:0; }
+// ── 따봉 (Firebase 연동 · 전체 임직원 공유) ──────────────────────────────────
+const LIKES_COL = db.collection('likes');
+const likeCache = {}; // { 가게명: { count, liked } }
 
-function toggleLike(btn,name){
-  const likes=getLikes();
-  if(!likes[name]) likes[name]={liked:false,count:0};
-  const now=!likes[name].liked;
-  likes[name].liked=now;
-  likes[name].count=Math.max(0,likes[name].count+(now?1:-1));
-  saveLikes(likes);
-  btn.classList.toggle('liked',now);
-  btn.querySelector('.lc').textContent=likes[name].count;
-  const h=btn.querySelector('.lheart');
+// 페이지 로드 시 전체 좋아요 수 불러오기
+async function loadAllLikes(){
+  try{
+    const snap = await LIKES_COL.get();
+    snap.forEach(d=>{
+      const data = d.data();
+      likeCache[d.id] = {
+        count: data.count || 0,
+        liked: !!(data.likedBy && data.likedBy[getDeviceId()])
+      };
+    });
+  } catch(e){ console.error('likes 로드 실패', e); }
+}
+
+// 기기 고유 ID (localStorage로 유지)
+function getDeviceId(){
+  let id = localStorage.getItem('grc_device_id');
+  if(!id){
+    id = 'dev_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem('grc_device_id', id);
+  }
+  return id;
+}
+
+function getLiked(name){ return likeCache[name]?.liked || false; }
+function getLikeCount(name){ return likeCache[name]?.count || 0; }
+
+async function toggleLike(btn, name){
+  const devId = getDeviceId();
+  const ref = LIKES_COL.doc(name);
+  const now = !getLiked(name);
+
+  // UI 즉시 반영 (낙관적 업데이트)
+  const prev = likeCache[name] || {count:0, liked:false};
+  const newCount = Math.max(0, prev.count + (now?1:-1));
+  likeCache[name] = {count: newCount, liked: now};
+  btn.classList.toggle('liked', now);
+  btn.querySelector('.lc').textContent = newCount;
+  const h = btn.querySelector('.lheart');
   h.style.animation='none';
   requestAnimationFrame(()=>{ h.style.animation='heartPop .35s ease'; });
+
+  try{
+    await ref.set({
+      count: firebase.firestore.FieldValue.increment(now ? 1 : -1),
+      [`likedBy.${devId}`]: now ? true : firebase.firestore.FieldValue.delete()
+    }, {merge: true});
+  } catch(e){
+    // 실패 시 롤백
+    likeCache[name] = prev;
+    btn.classList.toggle('liked', prev.liked);
+    btn.querySelector('.lc').textContent = prev.count;
+    showToast('❌ 저장 실패. 다시 시도해주세요.');
+    console.error(e);
+  }
 }
+
+// 초기 로드
+loadAllLikes();
 
 // ── 검색어 정리 (역명·점명 접미어 제거) ──────────────────────────────────────
 function cleanQuery(name, loc){
