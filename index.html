@@ -630,70 +630,6 @@ async function show(){
     </div>`;
   }).join('');
 }
-// ── 따봉 (Firebase 연동 · 전체 임직원 공유) ──────────────────────────────────
-const LIKES_COL = db.collection('likes');
-const likeCache = {}; // { 가게명: { count, liked } }
-
-// 페이지 로드 시 전체 좋아요 수 불러오기
-async function loadAllLikes(){
-  try{
-    const snap = await LIKES_COL.get();
-    snap.forEach(d=>{
-      const data = d.data();
-      likeCache[d.id] = {
-        count: data.count || 0,
-        liked: !!(data.likedBy && data.likedBy[getDeviceId()])
-      };
-    });
-  } catch(e){ console.error('likes 로드 실패', e); }
-}
-
-// 기기 고유 ID (localStorage로 유지)
-function getDeviceId(){
-  let id = localStorage.getItem('grc_device_id');
-  if(!id){
-    id = 'dev_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
-    localStorage.setItem('grc_device_id', id);
-  }
-  return id;
-}
-
-function getLiked(name){ return likeCache[name]?.liked || false; }
-function getLikeCount(name){ return likeCache[name]?.count || 0; }
-
-async function toggleLike(btn, name){
-  const devId = getDeviceId();
-  const ref = LIKES_COL.doc(name);
-  const now = !getLiked(name);
-
-  // UI 즉시 반영 (낙관적 업데이트)
-  const prev = likeCache[name] || {count:0, liked:false};
-  const newCount = Math.max(0, prev.count + (now?1:-1));
-  likeCache[name] = {count: newCount, liked: now};
-  btn.classList.toggle('liked', now);
-  btn.querySelector('.lc').textContent = newCount;
-  const h = btn.querySelector('.lheart');
-  h.style.animation='none';
-  requestAnimationFrame(()=>{ h.style.animation='heartPop .35s ease'; });
-
-  try{
-    await ref.set({
-      count: firebase.firestore.FieldValue.increment(now ? 1 : -1),
-      [`likedBy.${devId}`]: now ? true : firebase.firestore.FieldValue.delete()
-    }, {merge: true});
-  } catch(e){
-    // 실패 시 롤백
-    likeCache[name] = prev;
-    btn.classList.toggle('liked', prev.liked);
-    btn.querySelector('.lc').textContent = prev.count;
-    showToast('❌ 저장 실패. 다시 시도해주세요.');
-    console.error(e);
-  }
-}
-
-// 초기 로드
-loadAllLikes();
-
 // ── 검색어 정리 (역명·점명 접미어 제거) ──────────────────────────────────────
 function cleanQuery(name, loc){
   // 이름에서 불필요한 접미어 제거
@@ -968,6 +904,62 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db  = firebase.firestore();
 const COL = db.collection('feedback');
+
+// ── 따봉 (Firebase 연동 · 전체 임직원 공유) ──────────────────────────────────
+const LIKES_COL = db.collection('likes');
+const likeCache = {};
+
+async function loadAllLikes(){
+  try{
+    const snap = await LIKES_COL.get();
+    snap.forEach(d=>{
+      const data = d.data();
+      likeCache[d.id] = {
+        count: data.count || 0,
+        liked: !!(data.likedBy && data.likedBy[getDeviceId()])
+      };
+    });
+  } catch(e){ console.error('likes 로드 실패', e); }
+}
+
+function getDeviceId(){
+  let id = localStorage.getItem('grc_device_id');
+  if(!id){
+    id = 'dev_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    localStorage.setItem('grc_device_id', id);
+  }
+  return id;
+}
+
+function getLiked(name){ return likeCache[name]?.liked || false; }
+function getLikeCount(name){ return likeCache[name]?.count || 0; }
+
+async function toggleLike(btn, name){
+  const devId = getDeviceId();
+  const ref = LIKES_COL.doc(name);
+  const now = !getLiked(name);
+  const prev = likeCache[name] || {count:0, liked:false};
+  const newCount = Math.max(0, prev.count + (now?1:-1));
+  likeCache[name] = {count: newCount, liked: now};
+  btn.classList.toggle('liked', now);
+  btn.querySelector('.lc').textContent = newCount;
+  const h = btn.querySelector('.lheart');
+  h.style.animation='none';
+  requestAnimationFrame(()=>{ h.style.animation='heartPop .35s ease'; });
+  try{
+    await ref.set({
+      count: firebase.firestore.FieldValue.increment(now ? 1 : -1),
+      [`likedBy.${devId}`]: now ? true : firebase.firestore.FieldValue.delete()
+    }, {merge: true});
+  } catch(e){
+    likeCache[name] = prev;
+    btn.classList.toggle('liked', prev.liked);
+    btn.querySelector('.lc').textContent = prev.count;
+    showToast('❌ 저장 실패. 다시 시도해주세요.');
+    console.error(e);
+  }
+}
+loadAllLikes();
 
 // ── 열기 / 닫기 ───────────────────────────────────────────────────────────────
 function openFb(){
