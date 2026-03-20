@@ -366,7 +366,8 @@ const DB = [
 
 // ══════════════ 미금역 ══════════════
 // 돼지구이
-{name:'분당그릴',theme:'돼지구이',loc:'미금역',nr:4.8,rc:'리뷰 600+',hours:'16:00–22:00 / 주말 12:00–15:00,17:00–22:00',big:false,cap:'중형(20명)',rec:'미금 삼겹 1등',price:'1.5~2만원',desc:'네이버 미금역 삼겹살 검색 최상위. 30번 이상 재방문 단골 있는 집. 직원 직접 구이. 웨이팅 상시.'},
+{name:'군침',theme:'돼지구이',loc:'미금역',nr:5.0,rc:'리뷰 2+',hours:'평일 15:00–22:00 / 주말 14:00–22:00',big:false,cap:'중형(15명)',rec:'미금 신흥 맛집',price:'1.5~2만원',desc:'미금 식당골목 신흥 돼지구이 맛집. 고기 쫄깃하고 직원 서비스 좋다는 평. 스팀에그도 별미.'},
+{name:'분당그릴',theme:'돼지구이',loc:'미금역',nr:4.6,rc:'리뷰 277',hours:'평일 16:00–22:00 / 주말 12:00–15:00, 17:00–22:00',big:false,cap:'중형(20명)',rec:'미금 삼겹 1등',price:'1.5~2만원',desc:'미금역 삼겹살 맛집. 30번 이상 재방문 단골 있는 집. 직원 직접 구이. 항정·가브리·비빔국수 추천. 웨이팅 상시.'},
 {name:'마초생고기',theme:'돼지구이',loc:'미금역',nr:4.7,rc:'리뷰 400+',hours:'16:30–22:00',big:false,cap:'중형(15명)',rec:'통항정살 전문',price:'1.5~2만원',desc:'미금역 통항정살·통삼겹 전문. 코르키지 무료. 주인 직접 자랑하는 고기 품질. 냉면도 자체 제조.'},
 {name:'숯과소금',theme:'돼지구이',loc:'미금역',nr:4.7,rc:'리뷰 500+',hours:'17:00–24:00 / 일휴무',big:false,cap:'중형(15명)',rec:'미금 숯불 최고',price:'1.5~2만원',desc:'미금역 숯불 삼겹 명가. 오겹살 직화구이. 직원 직접 구이. 분당 최고 돼지 레스토랑 평가.'},
 {name:'추억의연탄집',theme:'돼지구이',loc:'미금역',nr:4.4,rc:'리뷰 500+',hours:'16:00–24:00',big:false,cap:'중형(15명)',rec:'고추장삼겹 시그니처',price:'1.5~2만원',desc:'고추장 삼겹살·연탄 직화 명가. 서울에서도 찾아오는 집. 고추장 특제 소스 조합이 절묘.'},
@@ -411,10 +412,10 @@ const TC={
   '소고기':{bg:'rgba(245,158,11,.15)',c:'#f59e0b',em:'🐄'},
   '회·해산물':{bg:'rgba(59,130,246,.15)',c:'#3b82f6',em:'🐟'},
   '치킨':{bg:'rgba(249,115,22,.15)',c:'#f97316',em:'🍗'},
-  '이자카야':{bg:'rgba(139,92,246,.15)',c:'#8b5cf6',em:'🍶'},
+  '이자카야':{bg:'rgba(139,92,246,.15)',c:'#8b5cf6',em:'🥃'},
   '중식':{bg:'rgba(236,72,153,.15)',c:'#ec4899',em:'🥢'},
   '양꼬치':{bg:'rgba(16,185,129,.15)',c:'#10b981',em:'🔥'},
-  '막걸리':{bg:'rgba(161,98,7,.15)',c:'#a16207',em:'🍺'},
+  '막걸리':{bg:'rgba(161,98,7,.15)',c:'#a16207',em:'🍶'},
 };
 const PO=[
   {cnt:'2–3명',em:'👥',sub:'소규모',big:false},
@@ -426,8 +427,8 @@ const PO=[
 ];
 const TL=[
   {l:'돼지구이',e:'🥩'},{l:'족발·보쌈',e:'🍖'},{l:'소고기',e:'🐄'},
-  {l:'회·해산물',e:'🐟'},{l:'치킨',e:'🍗'},{l:'이자카야',e:'🍶'},
-  {l:'중식',e:'🥢'},{l:'양꼬치',e:'🔥'},{l:'막걸리',e:'🍺'},{l:'🎲랜덤',e:'🎲',isRandom:true}
+  {l:'회·해산물',e:'🐟'},{l:'치킨',e:'🍗'},{l:'이자카야',e:'🥃'},
+  {l:'중식',e:'🥢'},{l:'양꼬치',e:'🔥'},{l:'막걸리',e:'🍶'},{l:'🎲랜덤',e:'🎲',isRandom:true}
 ];
 const LS=['전체','정자역','수내역','판교역','서현역','미금역'];
 let sp=null,st=new Set(),sl='전체';
@@ -675,6 +676,44 @@ function cleanQuery(name, loc){
 renderAll();
 </script>
 
+<!-- ── 수다방 버튼 (우측 하단 고정, 반영요청 위) ── -->
+<button class="chat-btn" id="chat-open-btn" title="수다방">
+  💭<span class="fb-label">수다방</span>
+</button>
+
+<!-- ── 수다방 모달 ── -->
+<div class="fb-overlay" id="chat-overlay"></div>
+<div class="fb-modal" id="chat-modal">
+  <div class="fb-head">
+    <div>
+      <div class="fb-title">💭 GRC 수다방</div>
+      <div class="fb-sub">익명으로 자유롭게 수다 떨어요 😄<br>
+        <span style="color:var(--accent);font-weight:600">비매너 채팅은 관리자가 삭제합니다!</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center">
+      <button class="admin-btn" id="chat-admin-btn">🔑 관리자</button>
+      <button class="fb-close" id="chat-close-btn">✕</button>
+    </div>
+  </div>
+
+  <!-- 채팅 목록 -->
+  <div class="fb-list-wrap">
+    <div class="chat-list" id="chat-list">
+      <div class="fb-empty">아직 대화가 없어요. 첫 번째로 말 걸어보세요!</div>
+    </div>
+  </div>
+
+  <!-- 입력창 -->
+  <div class="chat-input-wrap">
+    <input id="chat-nick" placeholder="닉네임 (선택)" maxlength="10">
+    <div class="chat-input-row">
+      <input id="chat-msg" placeholder="메시지를 입력하세요..." maxlength="200">
+      <button class="chat-send-btn" id="chat-send-btn">전송</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── 반영 요청 버튼 (우측 하단 고정) ── -->
 <button class="fb-btn" id="fb-open-btn" title="반영 요청하기">
   💬<span class="fb-label">반영 요청</span>
@@ -733,6 +772,12 @@ renderAll();
 /* 삭제 버튼 */
 .del-btn{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.2);border-radius:6px;padding:2px 8px;font-size:11px;color:var(--accent);cursor:pointer;transition:all .15s;white-space:nowrap}
 .del-btn:hover{background:var(--accent);color:#fff}
+.admin-comment{margin-top:8px;background:rgba(3,199,90,.08);border:1px solid rgba(3,199,90,.2);border-radius:8px;padding:7px 10px;font-size:12px;font-weight:700;color:#03c75a;line-height:1.4}
+.admin-comment-form{display:flex;gap:6px;margin-top:8px}
+.admin-comment-input{flex:1;background:var(--bg);border:1px solid rgba(3,199,90,.3);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--text);font-family:inherit;outline:none}
+.admin-comment-input:focus{border-color:#03c75a}
+.admin-comment-btn{background:rgba(3,199,90,.15);border:1px solid rgba(3,199,90,.3);border-radius:8px;padding:6px 10px;font-size:11px;font-weight:700;color:#03c75a;cursor:pointer;white-space:nowrap;transition:all .15s}
+.admin-comment-btn:hover{background:#03c75a;color:#fff}
 /* 비밀번호 모달 */
 .admin-pw-modal{display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.6);align-items:center;justify-content:center}
 .admin-pw-modal.on{display:flex}
@@ -742,6 +787,46 @@ renderAll();
 .admin-pw-box input:focus{border-color:var(--accent)}
 .admin-pw-cancel{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:100px;padding:8px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer}
 .admin-pw-ok{flex:1;background:linear-gradient(135deg,var(--accent),#ff8e53);border:none;border-radius:100px;padding:8px;font-size:13px;font-weight:800;color:#fff;cursor:pointer}
+
+/* 수다방 버튼 */
+.chat-btn{
+  position:fixed;bottom:88px;right:24px;z-index:999;
+  display:flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,#6366f1,#8b5cf6);
+  border:none;border-radius:100px;
+  padding:13px 20px;
+  font-size:14px;font-weight:800;color:#fff;
+  cursor:pointer;
+  box-shadow:0 6px 24px rgba(99,102,241,.45);
+  transition:all .2s;
+}
+.chat-btn:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 10px 32px rgba(99,102,241,.55)}
+/* 채팅 목록 */
+.chat-list{flex:1;overflow-y:auto;max-height:340px;padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.chat-list::-webkit-scrollbar{width:4px}
+.chat-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:100px}
+.chat-bubble{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:10px 14px;animation:fadeUp .2s ease;position:relative}
+.chat-bubble:hover .chat-del{opacity:1}
+.chat-bubble-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;gap:8px}
+.chat-nick{font-size:12px;font-weight:700;color:#a78bfa}
+.chat-time{font-size:10px;color:var(--muted)}
+.chat-text{font-size:13px;color:var(--text);line-height:1.5;word-break:break-all}
+.chat-del{opacity:0;background:rgba(255,107,107,.15);border:1px solid rgba(255,107,107,.3);border-radius:6px;padding:1px 7px;font-size:10px;color:var(--accent);cursor:pointer;transition:all .15s;white-space:nowrap}
+.chat-del:hover{background:var(--accent);color:#fff}
+/* 채팅 입력 */
+.chat-input-wrap{padding:12px 16px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+.chat-input-wrap input{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:13px;color:var(--text);font-family:inherit;outline:none;transition:border-color .15s;width:100%}
+.chat-input-wrap input::placeholder{color:var(--muted)}
+.chat-input-wrap input:focus{border-color:#6366f1}
+#chat-nick{font-size:12px;padding:7px 12px}
+.chat-input-row{display:flex;gap:8px}
+.chat-input-row input{flex:1}
+.chat-send-btn{background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:800;color:#fff;cursor:pointer;white-space:nowrap;transition:all .15s}
+.chat-send-btn:hover{opacity:.85}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:480px){
+  .chat-btn{bottom:76px;right:16px;padding:11px 16px;font-size:13px}
+}
 
 /* 플로팅 버튼 */
 .fb-btn{
@@ -923,13 +1008,24 @@ async function checkAdminPw(){
   const pw = document.getElementById('admin-pw-input').value;
   const hashed = await hashPw(pw);
   if(hashed === ADMIN_HASH){
-    isAdmin = true;
     document.getElementById('admin-pw-modal').classList.remove('on');
-    document.getElementById('admin-toggle-btn').classList.add('on');
-    document.getElementById('admin-toggle-btn').textContent = '✅ 관리자 ON';
-    loadFbList();
+    if(window._chatAdminMode){
+      // 수다방 관리자
+      window._chatAdminMode = false;
+      isChatAdmin = true;
+      document.getElementById('chat-admin-btn').classList.add('on');
+      document.getElementById('chat-admin-btn').textContent = '✅ 관리자 ON';
+      renderChatList(window._lastChatSnap);
+    } else {
+      // 반영요청 관리자
+      isAdmin = true;
+      document.getElementById('admin-toggle-btn').classList.add('on');
+      document.getElementById('admin-toggle-btn').textContent = '✅ 관리자 ON';
+      loadFbList();
+    }
     showToast('✅ 관리자 모드 활성화!');
   } else {
+    window._chatAdminMode = false;
     showToast('❌ 비밀번호가 틀렸어요!');
     document.getElementById('admin-pw-input').value = '';
     document.getElementById('admin-pw-input').focus();
@@ -958,6 +1054,15 @@ async function loadFbList(){
       const delBtn = isAdmin
         ? `<button class="del-btn" onclick="deleteFb('${d.id}')">🗑️ 삭제</button>`
         : '';
+      const adminComment = r.adminComment
+        ? `<div class="admin-comment">✅ 관리자: ${r.adminComment.replace(/</g,'&lt;')}</div>`
+        : '';
+      const adminCommentInput = isAdmin
+        ? `<div class="admin-comment-form">
+            <input class="admin-comment-input" id="aci-${d.id}" placeholder="관리자 답변 (예: 반영 완료!)" value="${r.adminComment||''}">
+            <button class="admin-comment-btn" onclick="saveAdminComment('${d.id}')">저장</button>
+           </div>`
+        : '';
       return `
         <div class="fb-item" id="fb-item-${d.id}">
           <div class="fb-item-top">
@@ -968,6 +1073,8 @@ async function loadFbList(){
             </span>
           </div>
           <div class="fb-item-text">${r.text.replace(/</g,'&lt;')}</div>
+          ${adminComment}
+          ${adminCommentInput}
         </div>`;
     }).join('');
   } catch(e){
@@ -975,6 +1082,22 @@ async function loadFbList(){
     console.error(e);
   }
 }
+
+// ── 관리자 댓글 저장 ───────────────────────────────────────────────────────────
+async function saveAdminComment(id){
+  if(!isAdmin) return;
+  const input = document.getElementById('aci-'+id);
+  const comment = input ? input.value.trim() : '';
+  try{
+    await COL.doc(id).update({ adminComment: comment });
+    showToast(comment ? '✅ 관리자 답변이 저장됐어요!' : '🗑️ 답변이 삭제됐어요!');
+    loadFbList();
+  } catch(e){
+    showToast('❌ 저장 실패. 다시 시도해주세요.');
+    console.error(e);
+  }
+}
+window.saveAdminComment = saveAdminComment;
 
 // ── 삭제 ──────────────────────────────────────────────────────────────────────
 async function deleteFb(id){
@@ -998,7 +1121,129 @@ async function deleteFb(id){
 }
 window.deleteFb = deleteFb;
 
-// ── 토스트 ────────────────────────────────────────────────────────────────────
+// ── 수다방 ────────────────────────────────────────────────────────────────────
+const CHAT_COL = db.collection('chatroom');
+let isChatAdmin = false;
+let chatUnsub = null;
+
+// 열기/닫기
+document.getElementById('chat-open-btn').addEventListener('click', ()=>{
+  document.getElementById('chat-overlay').classList.add('on');
+  document.getElementById('chat-modal').classList.add('on');
+  startChatListener();
+  setTimeout(()=>scrollChatBottom(), 300);
+});
+
+function closeChatModal(){
+  document.getElementById('chat-overlay').classList.remove('on');
+  document.getElementById('chat-modal').classList.remove('on');
+}
+document.getElementById('chat-close-btn').addEventListener('click', closeChatModal);
+document.getElementById('chat-overlay').addEventListener('click', (e)=>{
+  if(e.target === document.getElementById('chat-overlay')){
+    closeFb(); closeChatModal();
+  }
+});
+
+// 관리자 인증 (기존 비번 동일)
+document.getElementById('chat-admin-btn').addEventListener('click', ()=>{
+  if(isChatAdmin){
+    isChatAdmin = false;
+    document.getElementById('chat-admin-btn').classList.remove('on');
+    document.getElementById('chat-admin-btn').textContent = '🔑 관리자';
+    renderChatList(window._lastChatSnap);
+  } else {
+    document.getElementById('admin-pw-modal').classList.add('on');
+    document.getElementById('admin-pw-input').value = '';
+    window._chatAdminMode = true;
+    setTimeout(()=>document.getElementById('admin-pw-input').focus(), 100);
+  }
+});
+
+// 전송
+document.getElementById('chat-send-btn').addEventListener('click', sendChat);
+document.getElementById('chat-msg').addEventListener('keydown', e=>{
+  if(e.key==='Enter') sendChat();
+});
+
+async function sendChat(){
+  const nick = document.getElementById('chat-nick').value.trim() || '익명';
+  const msg  = document.getElementById('chat-msg').value.trim();
+  if(!msg){ showToast('메시지를 입력해주세요!'); return; }
+
+  const btn = document.getElementById('chat-send-btn');
+  btn.disabled = true;
+  try{
+    await CHAT_COL.add({
+      nick, msg,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    document.getElementById('chat-msg').value = '';
+    scrollChatBottom();
+  } catch(e){
+    showToast('❌ 전송 실패. 다시 시도해주세요.');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// 실시간 리스너
+function startChatListener(){
+  if(chatUnsub) return; // 이미 구독 중
+  chatUnsub = CHAT_COL.orderBy('createdAt','asc').limitToLast(100)
+    .onSnapshot(snap=>{
+      window._lastChatSnap = snap;
+      renderChatList(snap);
+      scrollChatBottom();
+    }, e=>console.error(e));
+}
+
+function renderChatList(snap){
+  const list = document.getElementById('chat-list');
+  if(!snap || snap.empty){
+    list.innerHTML = '<div class="fb-empty">아직 대화가 없어요. 첫 번째로 말 걸어보세요!</div>';
+    return;
+  }
+  list.innerHTML = snap.docs.map(d=>{
+    const r  = d.data();
+    const dt = r.createdAt
+      ? r.createdAt.toDate().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})
+      : '방금';
+    const delBtn = isChatAdmin
+      ? `<button class="chat-del" onclick="deleteChat('${d.id}')">🗑️</button>`
+      : '';
+    return `
+      <div class="chat-bubble" id="chat-${d.id}">
+        <div class="chat-bubble-top">
+          <span class="chat-nick">💬 ${r.nick}</span>
+          <span style="display:flex;align-items:center;gap:6px">
+            <span class="chat-time">${dt}</span>
+            ${delBtn}
+          </span>
+        </div>
+        <div class="chat-text">${r.msg.replace(/</g,'&lt;')}</div>
+      </div>`;
+  }).join('');
+}
+
+async function deleteChat(id){
+  if(!isChatAdmin) return;
+  try{
+    await CHAT_COL.doc(id).delete();
+    document.getElementById('chat-'+id)?.remove();
+    showToast('🗑️ 삭제됐어요!');
+  } catch(e){
+    showToast('❌ 삭제 실패.');
+  }
+}
+window.deleteChat = deleteChat;
+
+function scrollChatBottom(){
+  const list = document.getElementById('chat-list');
+  if(list) list.scrollTop = list.scrollHeight;
+}
+
+
 function showToast(msg){
   const t = document.createElement('div');
   t.className = 'fb-toast';
