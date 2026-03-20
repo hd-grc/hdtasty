@@ -951,23 +951,30 @@ function searchBus(){
         ${b.stops.indexOf(s)<b.stops.length-1?'<span class="bus-stop-arrow">›</span>':''}
       `).join('');
 
+      const allPassed = b.times.every(t => timeToMin(t) < nowMin - 10);
       const timesHtml = b.times.map(t=>{
         const tMin = timeToMin(t);
         const diff = tMin - nowMin;
-        let cls='', label='';
+        let cls='', label=t;
         if(diff < -10) cls='passed', label=t;
         else if(diff >= -10 && diff <= 60) cls='next', label=`${t} ⚡`;
         else label=t;
         return `<div class="bus-time ${cls}">${label}</div>`;
       }).join('');
 
+      const tomorrowBanner = allPassed ? `
+        <div style="padding:8px 18px;background:rgba(99,102,241,.08);border-top:1px solid var(--border);font-size:12px;color:#a5b4fc;font-weight:600">
+          😅 오늘은 모든 버스가 출발했어요. 내일 서두르면 탈 수 있어요! 💪
+        </div>` : '';
+
       return `<div class="bus-card" style="animation-delay:${i*.08}s">
         <div class="bus-card-head">
           <div class="bus-card-title">🚌 ${b.name}</div>
-          <span class="bus-badge direct">✅ 직통</span>
+          <span class="bus-badge direct">${allPassed ? '⏰ 내일 운행' : '✅ 직통'}</span>
         </div>
         <div class="bus-times">${timesHtml}</div>
         <div class="bus-stops">${stopsHtml}</div>
+        ${tomorrowBanner}
       </div>`;
     }).join('');
     return;
@@ -1003,6 +1010,7 @@ function searchBus(){
         <div class="transfer-title">🔄 ${query}역 직통버스는 없지만, 환승으로 갈 수 있어요!</div>
       </div>
     ` + transfers.slice(0,4).map((t,i)=>{
+      const allPassed2 = t.bus.times.every(tm => timeToMin(tm) < nowMin - 10);
       const timesHtml = t.bus.times.map(tm=>{
         const diff = timeToMin(tm) - nowMin;
         let cls='', label=tm;
@@ -1011,13 +1019,18 @@ function searchBus(){
         return `<div class="bus-time ${cls}">${label}</div>`;
       }).join('');
 
+      const tomorrowBanner2 = allPassed2 ? `
+        <div style="padding:8px 18px;background:rgba(99,102,241,.08);border-top:1px solid var(--border);font-size:12px;color:#a5b4fc;font-weight:600">
+          😅 오늘은 모든 버스가 출발했어요. 내일 서두르면 탈 수 있어요! 💪
+        </div>` : '';
+
       const lineColors = {'1호선':'#0052A4','2호선':'#009246','3호선':'#EF7C1C','4호선':'#00A2D1','5호선':'#996CAC','6호선':'#CD7C2F','7호선':'#747F00','8호선':'#E6186C','9호선':'#BDB092','경의중앙선':'#77C4A3','분당선':'#F5A200','신분당선':'#D4003B','공항철도':'#0065B3','경강선':'#003DA5','수인선':'#F5A200','인천1호선':'#7CA8D5','인천2호선':'#ED8B00','에버라인':'#52AE4C','신림선':'#6789CA','GTX-A':'#9C4199'};
       const linesHtml = t.lines.map(l=>`<span class="line-badge" style="background:${lineColors[l]||'#888'}">${l}</span>`).join('');
 
       return `<div class="bus-card" style="animation-delay:${i*.08}s">
         <div class="bus-card-head">
           <div class="bus-card-title">🚌 ${t.bus.name}</div>
-          <span class="bus-badge">🔄 환승</span>
+          <span class="bus-badge">${allPassed2 ? '⏰ 내일 운행' : '🔄 환승'}</span>
         </div>
         <div class="bus-times">${timesHtml}</div>
         <div style="padding:10px 18px 14px">
@@ -1031,6 +1044,7 @@ function searchBus(){
             <div class="transfer-step">🎯 ${query}역 도착</div>
           </div>
         </div>
+        ${tomorrowBanner2}
       </div>`;
     }).join('');
     return;
@@ -1042,9 +1056,9 @@ function searchBus(){
       <div class="bus-msg-icon">😢</div>
       <div class="bus-msg-text">
         <strong>${query}역</strong>으로 가는 직통 버스나<br>
-        5정거장 이내 환승 노선이 없어요.<br><br>
-        💬 <strong>퇴근버스 노선 확충을 요청</strong>해 보세요!<br>
-        우측 하단 반영 요청 버튼을 이용해주세요 😊
+        환승 가능한 노선을 찾지 못했어요.<br><br>
+        혹시 역 이름을 다르게 입력해보셨나요?<br>
+        <span style="color:#a5b4fc">예) 노원, 강남, 왕십리</span>
       </div>
     </div>`;
 }
