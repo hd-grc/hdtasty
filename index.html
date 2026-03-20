@@ -978,13 +978,13 @@ function searchBus(){
         ${b.stops.indexOf(s)<b.stops.length-1?'<span class="bus-stop-arrow">›</span>':''}
       `).join('');
 
-      const allPassed = b.times.every(t => timeToMin(t) < nowMin - 10);
+      const allPassed = b.times.every(t => timeToMin(t) < nowMin);
       const timesHtml = b.times.map(t=>{
         const tMin = timeToMin(t);
         const diff = tMin - nowMin;
         let cls='', label=t;
-        if(diff < -10) cls='passed', label=t;
-        else if(diff >= -10 && diff <= 60) cls='next', label=`${t} ⚡`;
+        if(diff < 0) cls='passed', label=t;
+        else if(diff >= 0 && diff <= 60) cls='next', label=`${t} ⚡`;
         else label=t;
         return `<div class="bus-time ${cls}">${label}</div>`;
       }).join('');
@@ -1037,12 +1037,12 @@ function searchBus(){
         <div class="transfer-title">🔄 ${query}역 직통버스는 없지만, 환승으로 갈 수 있어요!</div>
       </div>
     ` + transfers.slice(0,4).map((t,i)=>{
-      const allPassed2 = t.bus.times.every(tm => timeToMin(tm) < nowMin - 10);
+      const allPassed2 = t.bus.times.every(tm => timeToMin(tm) < nowMin);
       const timesHtml = t.bus.times.map(tm=>{
         const diff = timeToMin(tm) - nowMin;
         let cls='', label=tm;
-        if(diff < -10) cls='passed';
-        else if(diff >= -10 && diff <= 60) cls='next', label=`${tm} ⚡`;
+        if(diff < 0) cls='passed';
+        else if(diff >= 0 && diff <= 60) cls='next', label=`${tm} ⚡`;
         return `<div class="bus-time ${cls}">${label}</div>`;
       }).join('');
 
