@@ -57,6 +57,34 @@ h1{font-size:clamp(28px,5vw,52px);font-weight:800;line-height:1.15;letter-spacin
 .tbtn.random-btn.act .tl{color:#f0a500}
 @keyframes spin{0%,100%{transform:rotate(0deg)}25%{transform:rotate(-15deg)}75%{transform:rotate(15deg)}}
 
+/* DUAL SECTION (뽑기 + 임직원픽 나란히) */
+.dual-sec{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:1200px;margin:0 auto;padding:0 20px}
+@media(max-width:800px){.dual-sec{grid-template-columns:1fr}}
+
+/* 임직원픽 */
+.pick-sec{position:relative;z-index:5}
+.pick-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);border-radius:100px;padding:5px 16px;font-size:12px;font-weight:700;color:#3b82f6;margin-bottom:16px}
+.pick-refresh-btn{background:linear-gradient(135deg,#3b82f6,#6366f1)!important;box-shadow:0 6px 20px rgba(59,130,246,.35)!important}
+.pick-refresh-btn:hover{box-shadow:0 10px 28px rgba(59,130,246,.45)!important}
+.pick-list{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+.pick-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;transition:all .2s;animation:fu .3s ease both}
+.pick-item:hover{transform:translateY(-2px);border-color:rgba(59,130,246,.3);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.pick-rank{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0}
+.pick-rank.r1{background:linear-gradient(135deg,#ffd700,#ffb300);color:#7a5100}
+.pick-rank.r2{background:linear-gradient(135deg,#c0c0c0,#a8a8a8);color:#444}
+.pick-rank.r3{background:linear-gradient(135deg,#cd7f32,#b06820);color:#fff}
+.pick-rank.rn{background:var(--card2);border:1px solid var(--border);color:var(--muted)}
+.pick-info{flex:1;min-width:0}
+.pick-name{font-size:14px;font-weight:800;letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pick-meta{font-size:11px;color:var(--muted);margin-top:3px}
+.pick-count{display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0}
+.pick-num{font-size:20px;font-weight:800;color:#3b82f6;line-height:1}
+.pick-lbl{font-size:10px;color:var(--muted);font-weight:600}
+.pick-empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;line-height:1.6}
+
+/* RAND-SEC 단독일 때 */
+.rand-sec{position:relative;z-index:5}
+
 /* RANDOM RESULT SECTION */
 .rand-sec{position:relative;z-index:5;max-width:900px;margin:0 auto;padding:0 20px 60px;display:none}
 .rand-sec.show{display:block}
@@ -157,15 +185,33 @@ h1{font-size:clamp(28px,5vw,52px);font-weight:800;line-height:1.15;letter-spacin
   <div class="tgrid" id="tg"></div>
 </div>
 
-<!-- 랜덤 결과 섹션 -->
-<div class="rand-sec" id="rand-sec">
-  <div class="rand-header">
-    <div class="rand-badge">🎲 테마 중복 없이 완전 랜덤 9선</div>
-    <div class="rand-title">오늘의 회식 추천 뽑기 결과!</div>
-    <div class="rand-sub">테마 중복 없이 장르를 골고루 섞어 완전 랜덤으로 뽑았어요 🎲</div>
-    <button class="reshuffle-btn" onclick="doRandom()">🔀 다시 뽑기</button>
+<!-- 랜덤 + 임직원픽 나란히 -->
+<div class="dual-sec" id="dual-sec" style="display:none">
+
+  <!-- 오늘의 뽑기 -->
+  <div class="rand-sec" id="rand-sec">
+    <div class="rand-header">
+      <div class="rand-badge">🎲 테마 중복 없이 완전 랜덤 9선</div>
+      <div class="rand-title">오늘의 회식 추천 뽑기!</div>
+      <div class="rand-sub">테마 중복 없이 장르를 골고루 섞어 완전 랜덤으로 뽑았어요 🎲</div>
+      <button class="reshuffle-btn" onclick="doRandom()">🔀 다시 뽑기</button>
+    </div>
+    <div class="rand-grid" id="rand-grid"></div>
   </div>
-  <div class="rand-grid" id="rand-grid"></div>
+
+  <!-- 임직원픽 -->
+  <div class="pick-sec" id="pick-sec">
+    <div class="rand-header">
+      <div class="pick-badge">👍 임직원 따봉 집계</div>
+      <div class="rand-title">임직원픽! TOP 10</div>
+      <div class="rand-sub">임직원들이 직접 따봉으로 뽑은 진짜 맛집 순위예요 🏆</div>
+      <button class="reshuffle-btn pick-refresh-btn" onclick="loadPickList()">🔄 새로고침</button>
+    </div>
+    <div class="pick-list" id="pick-list">
+      <div class="fb-empty" style="padding:40px 0">로딩 중...</div>
+    </div>
+  </div>
+
 </div>
 
 
@@ -478,14 +524,17 @@ function pt(t){
   document.querySelector('.lsec').style.display = nowRand?'none':'';
   document.querySelector('.cta').style.display   = nowRand?'none':'';
   document.getElementById('rs').style.display    = 'none';
-  document.getElementById('rs').style.display    = 'none';
+  const dualSec = document.getElementById('dual-sec');
   const randSec = document.getElementById('rand-sec');
   if(nowRand){
-    randSec.classList.add('show');
+    dualSec.style.display = 'grid';
+    randSec.style.display = 'block';
     doRandom();
-    randSec.scrollIntoView({behavior:'smooth',block:'start'});
+    loadPickList();
+    dualSec.scrollIntoView({behavior:'smooth',block:'start'});
   } else {
-    randSec.classList.remove('show');
+    dualSec.style.display = 'none';
+    randSec.style.display = 'none';
   }
 }
 function pl(l){
@@ -667,9 +716,7 @@ renderAll();
   <div class="fb-head">
     <div>
       <div class="fb-title">💭 GRC 수다방</div>
-      <div class="fb-sub">익명으로 자유롭게 수다 떨어요 😄<br>
-        <span style="color:var(--accent);font-weight:600">비매너 채팅은 관리자가 삭제합니다!</span>
-      </div>
+      <div class="fb-sub"></div>
     </div>
     <div style="display:flex;gap:6px;align-items:center">
       <button class="admin-btn" id="chat-admin-btn">🔑 관리자</button>
@@ -949,6 +996,7 @@ async function toggleLike(btn, name){
   try{
     await ref.set({
       count: firebase.firestore.FieldValue.increment(now ? 1 : -1),
+      firstLiked: firebase.firestore.FieldValue.serverTimestamp(),
       [`likedBy.${devId}`]: now ? true : firebase.firestore.FieldValue.delete()
     }, {merge: true});
   } catch(e){
@@ -961,7 +1009,60 @@ async function toggleLike(btn, name){
 }
 loadAllLikes();
 
-// ── 열기 / 닫기 ───────────────────────────────────────────────────────────────
+// ── 임직원픽 TOP 10 ───────────────────────────────────────────────────────────
+async function loadPickList(){
+  const listEl = document.getElementById('pick-list');
+  if(!listEl) return;
+  listEl.innerHTML = '<div class="pick-empty">불러오는 중...</div>';
+  try{
+    const snap = await LIKES_COL.orderBy('count','desc').get();
+    if(snap.empty){
+      listEl.innerHTML = '<div class="pick-empty">아직 따봉이 없어요!<br>맛집 찾아서 👍 눌러주세요 😊</div>';
+      return;
+    }
+    let items = [];
+    snap.forEach(d=>{
+      const data = d.data();
+      if((data.count||0) < 1) return;
+      const restaurant = DB.find(r=>r.name === d.id);
+      items.push({
+        name: d.id,
+        count: data.count||0,
+        firstLiked: data.firstLiked||9999999999999,
+        theme: restaurant?.theme||'',
+        loc: restaurant?.loc||'',
+      });
+    });
+    // count 내림차순 → 동점이면 firstLiked 오름차순 (먼저 따봉 받은 순)
+    items.sort((a,b)=> b.count!==a.count ? b.count-a.count : a.firstLiked-b.firstLiked);
+    items = items.slice(0,10);
+
+    if(!items.length){
+      listEl.innerHTML = '<div class="pick-empty">아직 따봉이 없어요!<br>맛집 찾아서 👍 눌러주세요 😊</div>';
+      return;
+    }
+    const rankClass = i=>i===0?'r1':i===1?'r2':i===2?'r3':'rn';
+    const rankLabel = i=>i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}`;
+    listEl.innerHTML = items.map((r,i)=>{
+      const t = TC[r.theme]||{em:'🍴'};
+      return `<div class="pick-item" style="animation-delay:${i*.05}s">
+        <div class="pick-rank ${rankClass(i)}">${rankLabel(i)}</div>
+        <div class="pick-info">
+          <div class="pick-name">${r.name}</div>
+          <div class="pick-meta">${t.em} ${r.theme||'?'} · ${r.loc||'?'}</div>
+        </div>
+        <div class="pick-count">
+          <span class="pick-num">${r.count}</span>
+          <span class="pick-lbl">👍 추천</span>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e){
+    listEl.innerHTML = '<div class="pick-empty">불러오기 실패.<br>잠시 후 다시 시도해주세요.</div>';
+    console.error(e);
+  }
+}
+window.loadPickList = loadPickList;
 function openFb(){
   document.getElementById('fb-overlay').classList.add('on');
   document.getElementById('fb-modal').classList.add('on');
