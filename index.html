@@ -921,7 +921,18 @@ function busChipSearch(s){
   searchBus();
 }
 
-function getNowMinutes(){
+function getTomorrowMsg(){
+  const day = new Date().getDay(); // 0=일, 1=월, 2=화, 3=수, 4=목, 5=금, 6=토
+  if(day === 5) return '😄 오늘은 모든 버스가 출발했어요. 주말 잘 쉬세요! 🎉';
+  if(day === 6) return '🌿 오늘은 토요일이에요. 퇴근버스는 평일에 운행해요!';
+  if(day === 0) return '☀️ 오늘은 일요일이에요. 퇴근버스는 평일에 운행해요!';
+  return '😅 오늘은 모든 버스가 출발했어요. 내일 서두르면 탈 수 있어요! 💪';
+}
+
+function isWeekend(){
+  const day = new Date().getDay();
+  return day === 0 || day === 6;
+}
   const n = new Date();
   return n.getHours()*60 + n.getMinutes();
 }
@@ -933,6 +944,21 @@ function searchBus(){
   if(!query){ return; }
 
   const resultEl = document.getElementById('bus-result');
+
+  // 주말이면 바로 안내
+  if(isWeekend()){
+    resultEl.innerHTML = `
+      <div class="bus-msg">
+        <div class="bus-msg-icon">${new Date().getDay()===6?'🌿':'☀️'}</div>
+        <div class="bus-msg-text">
+          오늘은 <strong>${new Date().getDay()===6?'토요일':'일요일'}</strong>이에요.<br>
+          퇴근버스는 <strong style="color:#a5b4fc">평일에만 운행</strong>해요!<br><br>
+          주말도 화이팅! 😊
+        </div>
+      </div>`;
+    return;
+  }
+
   const nowMin = getNowMinutes();
 
   // 1. 직통 버스 찾기
@@ -964,7 +990,7 @@ function searchBus(){
 
       const tomorrowBanner = allPassed ? `
         <div style="padding:8px 18px;background:rgba(99,102,241,.08);border-top:1px solid var(--border);font-size:12px;color:#a5b4fc;font-weight:600">
-          😅 오늘은 모든 버스가 출발했어요. 내일 서두르면 탈 수 있어요! 💪
+          ${getTomorrowMsg()}
         </div>` : '';
 
       return `<div class="bus-card" style="animation-delay:${i*.08}s">
@@ -1021,7 +1047,7 @@ function searchBus(){
 
       const tomorrowBanner2 = allPassed2 ? `
         <div style="padding:8px 18px;background:rgba(99,102,241,.08);border-top:1px solid var(--border);font-size:12px;color:#a5b4fc;font-weight:600">
-          😅 오늘은 모든 버스가 출발했어요. 내일 서두르면 탈 수 있어요! 💪
+          ${getTomorrowMsg()}
         </div>` : '';
 
       const lineColors = {'1호선':'#0052A4','2호선':'#009246','3호선':'#EF7C1C','4호선':'#00A2D1','5호선':'#996CAC','6호선':'#CD7C2F','7호선':'#747F00','8호선':'#E6186C','9호선':'#BDB092','경의중앙선':'#77C4A3','분당선':'#F5A200','신분당선':'#D4003B','공항철도':'#0065B3','경강선':'#003DA5','수인선':'#F5A200','인천1호선':'#7CA8D5','인천2호선':'#ED8B00','에버라인':'#52AE4C','신림선':'#6789CA','GTX-A':'#9C4199'};
