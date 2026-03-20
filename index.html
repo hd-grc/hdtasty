@@ -933,6 +933,7 @@ function isWeekend(){
   const day = new Date().getDay();
   return day === 0 || day === 6;
 }
+function getNowMinutes(){
   const n = new Date();
   return n.getHours()*60 + n.getMinutes();
 }
