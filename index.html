@@ -1592,6 +1592,7 @@ async function loadPickList(){
       const data = d.data();
       if((data.count||0) < 1) return;
       const restaurant = DB.find(r=>r.name === d.id);
+      if(!restaurant) return; // DB에 없는 항목(폐업 등) 제외
       items.push({
         name: d.id,
         count: data.count||0,
