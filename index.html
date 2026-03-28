@@ -1308,43 +1308,6 @@ window.busChipSearch = busChipSearch;
   </div>
 </div>
 
-<!-- ── 반영 요청 버튼 (우측 하단 고정) ── -->
-<button class="fb-btn" id="fb-open-btn" title="반영 요청하기">
-  💬<span class="fb-label">반영 요청</span>
-</button>
-
-<!-- ── 반영 요청 모달 ── -->
-<div class="fb-overlay" id="fb-overlay"></div>
-<div class="fb-modal" id="fb-modal">
-  <div class="fb-head">
-    <div>
-      <div class="fb-title">💬 반영 요청 사항</div>
-      <div class="fb-sub">추가하고 싶은 맛집이나 수정 요청을 남겨주세요!<br>관리자가 확인 후 반영합니다 😊<br><span style="color:var(--accent);font-weight:600">HD현대중공업 이윤재 책임께 직접 문의하셔도 반영해 드립니다!</span></div>
-    </div>
-    <button class="fb-close" id="fb-close-btn">✕</button>
-  </div>
-
-  <!-- 입력 폼 -->
-  <div class="fb-form">
-    <input id="fb-name" placeholder="이름 (선택)" maxlength="20">
-    <textarea id="fb-text" placeholder="예) 수내역 OO식당 추가해주세요 / 판교역 △△ 정보가 틀렸어요 등" maxlength="300" rows="3"></textarea>
-    <div style="display:flex;align-items:center;justify-content:space-between">
-      <span class="fb-count" id="fb-charcount">0 / 300</span>
-      <button class="fb-submit" id="fb-submit-btn">✉️ 제출하기</button>
-    </div>
-  </div>
-
-  <!-- 댓글 목록 -->
-  <div class="fb-list-wrap">
-    <div class="fb-list-title">
-      📋 요청 목록 <span id="fb-total"></span>
-      <button class="admin-btn" id="admin-toggle-btn">🔑 관리자</button>
-    </div>
-    <div class="fb-list" id="fb-list">
-      <div class="fb-empty">아직 요청이 없어요. 첫 번째로 남겨보세요!</div>
-    </div>
-  </div>
-</div>
 
 <!-- 관리자 비밀번호 모달 -->
 <div class="admin-pw-modal" id="admin-pw-modal">
@@ -1384,7 +1347,7 @@ window.busChipSearch = busChipSearch;
 
 /* 수다방 버튼 */
 .chat-btn{
-  position:fixed;bottom:88px;right:24px;z-index:999;
+  position:fixed;bottom:28px;right:24px;z-index:999;
   display:flex;align-items:center;gap:8px;
   background:linear-gradient(135deg,#6366f1,#8b5cf6);
   border:none;border-radius:100px;
@@ -1419,22 +1382,9 @@ window.busChipSearch = busChipSearch;
 .chat-send-btn:hover{opacity:.85}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:480px){
-  .chat-btn{bottom:76px;right:16px;padding:11px 16px;font-size:13px}
+  .chat-btn{bottom:20px;right:16px;padding:11px 16px;font-size:13px}
 }
 
-/* 플로팅 버튼 */
-.fb-btn{
-  position:fixed;bottom:28px;right:24px;z-index:999;
-  display:flex;align-items:center;gap:8px;
-  background:linear-gradient(135deg,var(--accent),#ff8e53);
-  border:none;border-radius:100px;
-  padding:13px 20px;
-  font-size:14px;font-weight:800;color:#fff;
-  cursor:pointer;
-  box-shadow:0 6px 24px rgba(255,107,107,.45);
-  transition:all .2s;
-}
-.fb-btn:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 10px 32px rgba(255,107,107,.55)}
 .fb-label{white-space:nowrap}
 
 /* 오버레이 */
@@ -1631,201 +1581,6 @@ async function loadPickList(){
   }
 }
 window.loadPickList = loadPickList;
-function openFb(){
-  document.getElementById('fb-overlay').classList.add('on');
-  document.getElementById('fb-modal').classList.add('on');
-  loadFbList();
-}
-function closeFb(){
-  document.getElementById('fb-overlay').classList.remove('on');
-  document.getElementById('fb-modal').classList.remove('on');
-}
-
-document.getElementById('fb-open-btn').addEventListener('click', openFb);
-document.getElementById('fb-close-btn').addEventListener('click', closeFb);
-document.getElementById('fb-overlay').addEventListener('click', closeFb);
-
-// ── 글자 수 카운트 ────────────────────────────────────────────────────────────
-document.getElementById('fb-text').addEventListener('input', function(){
-  document.getElementById('fb-charcount').textContent = this.value.length + ' / 300';
-});
-
-// ── 제출 ──────────────────────────────────────────────────────────────────────
-document.getElementById('fb-submit-btn').addEventListener('click', async function(){
-  const name = document.getElementById('fb-name').value.trim() || '익명';
-  const text = document.getElementById('fb-text').value.trim();
-  if(!text){ showToast('내용을 입력해주세요!'); return; }
-
-  this.disabled = true;
-  this.textContent = '전송 중...';
-
-  try{
-    await COL.add({ name, text, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-    document.getElementById('fb-name').value = '';
-    document.getElementById('fb-text').value = '';
-    document.getElementById('fb-charcount').textContent = '0 / 300';
-    showToast('✅ 요청이 등록됐어요!');
-    loadFbList();
-  } catch(e){
-    showToast('❌ 등록 실패. 다시 시도해주세요.');
-    console.error(e);
-  } finally {
-    this.disabled = false;
-    this.textContent = '✉️ 제출하기';
-  }
-});
-
-// ── 관리자 모드 ───────────────────────────────────────────────────────────────
-// 비밀번호는 SHA-256 해시로 저장 (원본 비번 노출 방지)
-const ADMIN_HASH = '5efbb4acf9b7f55d7fa6dafda85c435f444a6277c6bbfb8f898d405baa2ed610';
-let isAdmin = false;
-
-async function hashPw(pw){
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-
-document.getElementById('admin-toggle-btn').addEventListener('click', ()=>{
-  if(isAdmin){
-    // 이미 관리자면 로그아웃
-    isAdmin = false;
-    document.getElementById('admin-toggle-btn').classList.remove('on');
-    document.getElementById('admin-toggle-btn').textContent = '🔑 관리자';
-    loadFbList();
-  } else {
-    // 비밀번호 모달 열기
-    document.getElementById('admin-pw-modal').classList.add('on');
-    document.getElementById('admin-pw-input').value = '';
-    setTimeout(()=>document.getElementById('admin-pw-input').focus(), 100);
-  }
-});
-
-document.getElementById('admin-pw-cancel').addEventListener('click', ()=>{
-  document.getElementById('admin-pw-modal').classList.remove('on');
-});
-
-document.getElementById('admin-pw-ok').addEventListener('click', checkAdminPw);
-document.getElementById('admin-pw-input').addEventListener('keydown', e=>{
-  if(e.key==='Enter') checkAdminPw();
-});
-
-async function checkAdminPw(){
-  const pw = document.getElementById('admin-pw-input').value;
-  const hashed = await hashPw(pw);
-  if(hashed === ADMIN_HASH){
-    document.getElementById('admin-pw-modal').classList.remove('on');
-    if(window._chatAdminMode){
-      // 수다방 관리자
-      window._chatAdminMode = false;
-      isChatAdmin = true;
-      document.getElementById('chat-admin-btn').classList.add('on');
-      document.getElementById('chat-admin-btn').textContent = '✅ 관리자 ON';
-      renderChatList(window._lastChatSnap);
-    } else {
-      // 반영요청 관리자
-      isAdmin = true;
-      document.getElementById('admin-toggle-btn').classList.add('on');
-      document.getElementById('admin-toggle-btn').textContent = '✅ 관리자 ON';
-      loadFbList();
-    }
-    showToast('✅ 관리자 모드 활성화!');
-  } else {
-    window._chatAdminMode = false;
-    showToast('❌ 비밀번호가 틀렸어요!');
-    document.getElementById('admin-pw-input').value = '';
-    document.getElementById('admin-pw-input').focus();
-  }
-}
-
-// ── 목록 불러오기 ─────────────────────────────────────────────────────────────
-async function loadFbList(){
-  const list  = document.getElementById('fb-list');
-  const total = document.getElementById('fb-total');
-  list.innerHTML = '<div class="fb-empty">불러오는 중...</div>';
-
-  try{
-    const snap = await COL.orderBy('createdAt','desc').get();
-    total.innerHTML = `<span class="fb-total-badge">${snap.size}건</span>`;
-
-    if(snap.empty){
-      list.innerHTML = '<div class="fb-empty">아직 요청이 없어요. 첫 번째로 남겨보세요!</div>';
-      return;
-    }
-    list.innerHTML = snap.docs.map(d=>{
-      const r  = d.data();
-      const dt = r.createdAt
-        ? r.createdAt.toDate().toLocaleDateString('ko-KR',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})
-        : '방금';
-      const delBtn = isAdmin
-        ? `<button class="del-btn" onclick="deleteFb('${d.id}')">🗑️ 삭제</button>`
-        : '';
-      const adminComment = r.adminComment
-        ? `<div class="admin-comment">✅ 관리자: ${r.adminComment.replace(/</g,'&lt;')}</div>`
-        : '';
-      const adminCommentInput = isAdmin
-        ? `<div class="admin-comment-form">
-            <input class="admin-comment-input" id="aci-${d.id}" placeholder="관리자 답변 (예: 반영 완료!)" value="${r.adminComment||''}">
-            <button class="admin-comment-btn" onclick="saveAdminComment('${d.id}')">저장</button>
-           </div>`
-        : '';
-      return `
-        <div class="fb-item" id="fb-item-${d.id}">
-          <div class="fb-item-top">
-            <span class="fb-item-name">👤 ${r.name}</span>
-            <span style="display:flex;align-items:center;gap:6px">
-              <span class="fb-item-date">${dt}</span>
-              ${delBtn}
-            </span>
-          </div>
-          <div class="fb-item-text">${r.text.replace(/</g,'&lt;')}</div>
-          ${adminComment}
-          ${adminCommentInput}
-        </div>`;
-    }).join('');
-  } catch(e){
-    list.innerHTML = '<div class="fb-empty">불러오기 실패. 잠시 후 다시 시도해주세요.</div>';
-    console.error(e);
-  }
-}
-
-// ── 관리자 댓글 저장 ───────────────────────────────────────────────────────────
-async function saveAdminComment(id){
-  if(!isAdmin) return;
-  const input = document.getElementById('aci-'+id);
-  const comment = input ? input.value.trim() : '';
-  try{
-    await COL.doc(id).update({ adminComment: comment });
-    showToast(comment ? '✅ 관리자 답변이 저장됐어요!' : '🗑️ 답변이 삭제됐어요!');
-    loadFbList();
-  } catch(e){
-    showToast('❌ 저장 실패. 다시 시도해주세요.');
-    console.error(e);
-  }
-}
-window.saveAdminComment = saveAdminComment;
-
-// ── 삭제 ──────────────────────────────────────────────────────────────────────
-async function deleteFb(id){
-  if(!isAdmin) return;
-  if(!confirm('이 요청을 삭제할까요?')) return;
-  try{
-    await COL.doc(id).delete();
-    document.getElementById('fb-item-'+id)?.remove();
-    // 총 건수 업데이트
-    const remaining = document.querySelectorAll('.fb-item').length;
-    document.getElementById('fb-total').innerHTML =
-      `<span class="fb-total-badge">${remaining}건</span>`;
-    if(remaining===0)
-      document.getElementById('fb-list').innerHTML =
-        '<div class="fb-empty">아직 요청이 없어요. 첫 번째로 남겨보세요!</div>';
-    showToast('🗑️ 삭제됐어요!');
-  } catch(e){
-    showToast('❌ 삭제 실패. 다시 시도해주세요.');
-    console.error(e);
-  }
-}
-window.deleteFb = deleteFb;
-
 // ── 수다방 ────────────────────────────────────────────────────────────────────
 const CHAT_COL = db.collection('chatroom');
 let isChatAdmin = false;
@@ -1846,7 +1601,7 @@ function closeChatModal(){
 document.getElementById('chat-close-btn').addEventListener('click', closeChatModal);
 document.getElementById('chat-overlay').addEventListener('click', (e)=>{
   if(e.target === document.getElementById('chat-overlay')){
-    closeFb(); closeChatModal();
+    closeChatModal();
   }
 });
 
