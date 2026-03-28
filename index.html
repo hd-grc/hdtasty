@@ -50,6 +50,8 @@ h1{font-size:clamp(28px,5vw,52px);font-weight:800;line-height:1.15;letter-spacin
 
 /* RANDOM BTN */
 .tbtn[data-t="🎲랜덤"]{--tc:#d97706;--tbg:rgba(217,119,6,.1)}
+.tbtn[data-t="👍임직원픽"]{--tc:#3b82f6;--tbg:rgba(59,130,246,.1)}
+.tbtn.pick-btn{background:linear-gradient(135deg,#eff6ff,#fff);border:2px solid #bfdbfe;color:#2563eb}
 .tbtn.random-btn{background:linear-gradient(135deg,#fff9f0,#fff8e8);border:2px dashed #f0a500;color:#b07800;position:relative;overflow:hidden}
 .tbtn.random-btn .te{animation:spin 3s linear infinite}
 .tbtn.random-btn:hover{background:linear-gradient(135deg,#fff4de,#fff1d0);border-color:#d97706;transform:translateY(-2px) scale(1.04)}
@@ -86,7 +88,7 @@ h1{font-size:clamp(28px,5vw,52px);font-weight:800;line-height:1.15;letter-spacin
 .rand-sec{position:relative;z-index:5}
 
 /* RANDOM RESULT SECTION */
-.rand-sec{position:relative;z-index:5;max-width:900px;margin:0 auto;padding:0 20px 60px;display:none}
+.rand-sec{position:relative;z-index:5;max-width:1100px;margin:0 auto;padding:0 20px 60px;display:none}
 .rand-sec.show{display:block}
 .rand-header{text-align:center;margin-bottom:28px}
 .rand-title{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px}
@@ -229,35 +231,29 @@ h1{font-size:clamp(28px,5vw,52px);font-weight:800;line-height:1.15;letter-spacin
   <div class="tgrid" id="tg"></div>
 </div>
 
-<!-- 랜덤 + 임직원픽 나란히 -->
-<div class="dual-sec" id="dual-sec" style="display:none">
-
-  <!-- 오늘의 뽑기 -->
-  <div class="rand-sec" id="rand-sec">
-    <div class="rand-header">
-      <div class="rand-badge">🎲 테마 중복 없이 완전 랜덤 9선</div>
-      <div class="rand-title">오늘의 회식 추천 뽑기!</div>
-      <div class="rand-sub">테마 중복 없이 장르를 골고루 섞어 완전 랜덤으로 뽑았어요 🎲</div>
-      <button class="reshuffle-btn" onclick="doRandom()">🔀 다시 뽑기</button>
-    </div>
-    <div class="rand-grid" id="rand-grid"></div>
+<!-- 오늘의 뽑기 (랜덤 버튼 선택 시 표시) -->
+<div class="rand-sec" id="rand-sec" style="display:none">
+  <div class="rand-header">
+    <div class="rand-badge">🎲 테마 중복 없이 완전 랜덤 10선</div>
+    <div class="rand-title">오늘의 회식 추천 뽑기!</div>
+    <div class="rand-sub">테마 중복 없이 장르를 골고루 섞어 완전 랜덤으로 뽑았어요 🎲</div>
+    <button class="reshuffle-btn" onclick="doRandom()">🔀 다시 뽑기</button>
   </div>
-
-  <!-- 임직원픽 -->
-  <div class="pick-sec" id="pick-sec">
-    <div class="rand-header">
-      <div class="pick-badge">👍 임직원 따봉 집계</div>
-      <div class="rand-title">임직원픽! TOP 10</div>
-      <div class="rand-sub">임직원들이 직접 따봉으로 뽑은 진짜 맛집 순위예요 🏆</div>
-      <button class="reshuffle-btn pick-refresh-btn" onclick="loadPickList()">🔄 새로고침</button>
-    </div>
-    <div class="pick-list" id="pick-list">
-      <div class="fb-empty" style="padding:40px 0">로딩 중...</div>
-    </div>
-  </div>
-
+  <div class="rand-grid" id="rand-grid"></div>
 </div>
 
+<!-- 임직원픽 TOP 10 -->
+<div class="pick-sec" id="pick-sec" style="display:none;max-width:640px;margin:0 auto;padding:0 20px 60px">
+  <div class="rand-header">
+    <div class="pick-badge">👍 임직원 따봉 집계</div>
+    <div class="rand-title">임직원픽! TOP 10</div>
+    <div class="rand-sub">임직원들이 직접 따봉으로 뽑은 진짜 맛집 순위예요 🏆</div>
+    <button class="reshuffle-btn pick-refresh-btn" onclick="loadPickList()">🔄 새로고침</button>
+  </div>
+  <div class="pick-list" id="pick-list">
+    <div class="fb-empty" style="padding:40px 0">로딩 중...</div>
+  </div>
+</div>
 
 <div class="lsec">
   <p class="slabel">어디로 갈거예요?</p>
@@ -280,6 +276,7 @@ h1{font-size:clamp(28px,5vw,52px);font-weight:800;line-height:1.15;letter-spacin
 </div>
 
 </div><!-- /tab-food -->
+
 
 <!-- 퇴근버스 탭 -->
 <div class="tab-content" id="tab-bus">
@@ -470,7 +467,7 @@ const PO=[
 const TL=[
   {l:'돼지구이',e:'🥩'},{l:'족발·보쌈',e:'🍖'},{l:'소고기',e:'🐄'},
   {l:'회·해산물',e:'🐟'},{l:'치킨',e:'🍗'},{l:'이자카야',e:'🥃'},
-  {l:'중식',e:'🥢'},{l:'양꼬치',e:'🔥'},{l:'막걸리',e:'🍶'},{l:'단체예약',e:'🏢'},{l:'🎲랜덤',e:'🎲',isRandom:true}
+  {l:'중식',e:'🥢'},{l:'양꼬치',e:'🔥'},{l:'막걸리',e:'🍶'},{l:'단체예약',e:'🏢'},{l:'👍임직원픽',e:'👍',isPick:true},{l:'🎲랜덤',e:'🎲',isRandom:true}
 ];
 const LS=['전체','정자역','수내역'];
 let sp=null,st=new Set(),sl='전체';
@@ -478,8 +475,8 @@ let sp=null,st=new Set(),sl='전체';
 function renderAll(){
   // 테마
   document.getElementById('tg').innerHTML=TL.map(t=>`
-    <button class="tbtn${t.isRandom?' random-btn':''}" data-t="${t.l}" onclick="pt('${t.l}')">
-      <span class="te">${t.e}</span><span class="tl">${t.isRandom?'오늘의 뽑기':t.l}</span>
+    <button class="tbtn${t.isRandom?' random-btn':t.isPick?' pick-btn':''}" data-t="${t.l}" onclick="pt('${t.l}')">
+      <span class="te">${t.e}</span><span class="tl">${t.isRandom?'오늘의 뽑기':t.isPick?'임직원픽 TOP 10':t.l}</span>
     </button>`).join('');
   // 지역
   document.getElementById('lg').innerHTML=LS.map(l=>`
@@ -487,18 +484,17 @@ function renderAll(){
 }
 function pt(t){
   const isRand = t==='🎲랜덤';
+  const isPick = t==='👍임직원픽';
 
   if(isRand){
-    // 랜덤은 단독 토글 — 다른 테마 모두 해제
-    if(st.has('🎲랜덤')){
-      st.delete('🎲랜덤');
-    } else {
-      st.clear();
-      st.add('🎲랜덤');
-    }
+    if(st.has('🎲랜덤')){ st.delete('🎲랜덤'); }
+    else { st.clear(); st.add('🎲랜덤'); }
+  } else if(isPick){
+    if(st.has('👍임직원픽')){ st.delete('👍임직원픽'); }
+    else { st.clear(); st.add('👍임직원픽'); }
   } else {
-    // 일반 테마: 랜덤 해제 + 다중 토글
     st.delete('🎲랜덤');
+    st.delete('👍임직원픽');
     if(st.has(t)) st.delete(t);
     else st.add(t);
   }
@@ -506,20 +502,29 @@ function pt(t){
   document.querySelectorAll('.tbtn').forEach(b=>b.classList.toggle('act', st.has(b.dataset.t)));
 
   const nowRand = st.has('🎲랜덤');
-  document.querySelector('.lsec').style.display = nowRand?'none':'';
-  document.querySelector('.cta').style.display   = nowRand?'none':'';
+  const nowPick = st.has('👍임직원픽');
+  const showSpecial = nowRand || nowPick;
+
+  document.querySelector('.lsec').style.display = showSpecial?'none':'';
+  document.querySelector('.cta').style.display   = showSpecial?'none':'';
   document.getElementById('rs').style.display    = 'none';
-  const dualSec = document.getElementById('dual-sec');
+
   const randSec = document.getElementById('rand-sec');
+  const pickSec = document.getElementById('pick-sec');
+
   if(nowRand){
-    dualSec.style.display = 'grid';
     randSec.style.display = 'block';
+    pickSec.style.display = 'none';
     doRandom();
-    loadPickList();
-    dualSec.scrollIntoView({behavior:'smooth',block:'start'});
-  } else {
-    dualSec.style.display = 'none';
+    randSec.scrollIntoView({behavior:'smooth',block:'start'});
+  } else if(nowPick){
     randSec.style.display = 'none';
+    pickSec.style.display = 'block';
+    loadPickList();
+    pickSec.scrollIntoView({behavior:'smooth',block:'start'});
+  } else {
+    randSec.style.display = 'none';
+    pickSec.style.display = 'none';
   }
 }
 function pl(l){
@@ -546,10 +551,10 @@ function doRandom(){
   });
 
   // 9개 미만이면 남은 DB에서 랜덤으로 채우기
-  if(picked.length < 9){
+  if(picked.length < 10){
     const remain = DB.filter(r=>!usedNames.has(r.name)).sort(()=>Math.random()-.5);
     for(const r of remain){
-      if(picked.length>=9) break;
+      if(picked.length>=10) break;
       picked.push(r);
       usedNames.add(r.name);
     }
@@ -559,7 +564,7 @@ function doRandom(){
   picked.sort(()=>Math.random()-.5);
 
   const emojis=['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣'];
-  document.getElementById('rand-grid').innerHTML = picked.slice(0,9).map((r,i)=>{
+  document.getElementById('rand-grid').innerHTML = picked.slice(0,10).map((r,i)=>{
     const tc=TC[r.theme]||{bg:'rgba(255,255,255,.1)',c:'#fff',em:'🍴'};
     const nu=`https://map.naver.com/p/search/${encodeURIComponent(cleanQuery(r.name,r.loc))}`;
     const ku=`https://map.kakao.com/link/search/${encodeURIComponent(cleanQuery(r.name,r.loc))}`;
