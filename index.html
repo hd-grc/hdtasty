@@ -611,9 +611,10 @@ async function show(){
   }
   if(sl!=='전체') list=list.filter(r=>r.loc===sl);
 
+  // 단체예약은 평점순, 일반 카테고리는 랜덤
   const isBig = st.has('단체예약');
   if(isBig) list.sort((a,b)=>b.nr-a.nr);
-  else list.sort((a,b)=>b.nr-a.nr);
+  else list.sort(()=>Math.random()-.5);
 
   // 중복 제거 (이름+테마 조합 기준 — 같은 가게도 테마 다르면 각각 표시)
   const seen=new Set();
