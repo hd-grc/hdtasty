@@ -42,7 +42,7 @@ h1{font-size:clamp(28px,5vw,52px);font-weight:800;line-height:1.15;letter-spacin
 .tbtn:hover{transform:translateY(-2px)}
 .tbtn[data-t="돼지구이"]{--tc:#e85555;--tbg:rgba(232,85,85,.12)}.tbtn[data-t="족발·보쌈"]{--tc:#9333ea;--tbg:rgba(147,51,234,.12)}.tbtn[data-t="소고기"]{--tc:#d97706;--tbg:rgba(217,119,6,.12)}
 .tbtn[data-t="회·해산물"]{--tc:#2563eb;--tbg:rgba(37,99,235,.12)}.tbtn[data-t="치킨"]{--tc:#ea6c10;--tbg:rgba(234,108,16,.12)}.tbtn[data-t="이자카야"]{--tc:#7c3aed;--tbg:rgba(124,58,237,.12)}
-.tbtn[data-t="중식"]{--tc:#db2777;--tbg:rgba(219,39,119,.12)}.tbtn[data-t="양꼬치"]{--tc:#059669;--tbg:rgba(5,150,105,.12)}.tbtn[data-t="막걸리"]{--tc:#92400e;--tbg:rgba(146,64,14,.12)}.tbtn[data-t="단체예약"]{--tc:#6366f1;--tbg:rgba(99,102,241,.12)}
+.tbtn[data-t="중식"]{--tc:#db2777;--tbg:rgba(219,39,119,.12)}.tbtn[data-t="양꼬치"]{--tc:#059669;--tbg:rgba(5,150,105,.12)}.tbtn[data-t="막걸리"]{--tc:#92400e;--tbg:rgba(146,64,14,.12)}
 .tbtn:hover{border-color:var(--tc,#aaa);background:var(--tbg,#f5f5f5);color:var(--tc,#444)}
 .tbtn.act{border-color:var(--tc,#555);background:var(--tc,#555);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.15)}
 .tbtn.act .tl{color:#fff;font-weight:800}
@@ -585,7 +585,7 @@ const PO=[
 const TL=[
   {l:'돼지구이',e:'🥩'},{l:'족발·보쌈',e:'🍖'},{l:'소고기',e:'🐄'},
   {l:'회·해산물',e:'🐟'},{l:'치킨',e:'🍗'},{l:'이자카야',e:'🥃'},
-  {l:'중식',e:'🥢'},{l:'양꼬치',e:'🔥'},{l:'막걸리',e:'🍶'},{l:'단체예약',e:'🏢'},{l:'👍임직원픽',e:'👍',isPick:true},{l:'🎲랜덤',e:'🎲',isRandom:true}
+  {l:'중식',e:'🥢'},{l:'양꼬치',e:'🔥'},{l:'막걸리',e:'🍶'},{l:'👍임직원픽',e:'👍',isPick:true},{l:'🎲랜덤',e:'🎲',isRandom:true}
 ];
 const LS=['전체','정자역','수내역'];
 let sp=null,st=new Set(),sl='전체';
@@ -711,21 +711,12 @@ async function show(){
   await loadAllLikes(); // 최신 따봉 수 반영
   let list=[...DB];
 
-  // 단체예약 선택 시 big:true 가게만
-  if(st.has('단체예약')){
-    list=list.filter(r=>r.big);
-    // 단체예약 외 다른 테마도 선택됐으면 함께 필터
-    const otherThemes=[...st].filter(t=>t!=='단체예약'&&t!=='🎲랜덤');
-    if(otherThemes.length>0) list=list.filter(r=>otherThemes.includes(r.theme));
-  } else if(st.size>0){
+  if(st.size>0){
     list=list.filter(r=>st.has(r.theme));
   }
   if(sl!=='전체') list=list.filter(r=>r.loc===sl);
 
-  // 단체예약은 평점순, 일반 카테고리는 랜덤
-  const isBig = st.has('단체예약');
-  if(isBig) list.sort((a,b)=>b.nr-a.nr);
-  else list.sort(()=>Math.random()-.5);
+  list.sort(()=>Math.random()-.5);
 
   // 중복 제거 (이름+테마 조합 기준 — 같은 가게도 테마 다르면 각각 표시)
   const seen=new Set();
@@ -748,21 +739,20 @@ async function show(){
 
   document.getElementById('rg').innerHTML=list.map((r,i)=>{
     const tc=TC[r.theme]||{bg:'rgba(255,255,255,.1)',c:'#fff',em:'🍴'};
-    const sb=r.big&&isBig;
     const nu=r.nurl||`https://map.naver.com/p/search/${encodeURIComponent(cleanQuery(r.name,r.loc))}`;
     const ku=r.kurl||`https://map.kakao.com/link/search/${encodeURIComponent(cleanQuery(r.name,r.loc))}`;
-    return `<div class="rc${sb?' bigc':''}" style="animation-delay:${i*.035}s">
+    return `<div class="rc" style="animation-delay:${i*.035}s">
       <div class="rtop">
         <div style="min-width:0;flex:1">
           <div class="rtag" style="background:${tc.bg};color:${tc.c}">${tc.em} ${r.theme}</div>
-          ${r.big?`<div class="captag">🏢 ${r.cap}</div>`:''}
+          
           <div class="rname">${r.name}</div>
           <div class="rmeta">
             <span>${r.loc}</span>
             ${r.rc && r.rc!=='카카오 후기없음' ? `<span class="rdot">·</span><span style="color:#FFAE00;font-weight:700">⭐ ${r.rc.replace('카카오 ','')}</span>` : r.rc==='카카오 후기없음' ? '<span class="rdot">·</span><span style="color:var(--muted);font-size:10px">후기없음</span>' : ''}
           </div>
         </div>
-        <div class="rbadge${sb?' gold':''}" style="flex-shrink:0">${sb?'🏢 단체 OK':'🔥 '+r.rec}</div>
+        <div class="rbadge" style="flex-shrink:0">🔥 ${r.rec}</div>
       </div>
       <div class="rdesc">${r.desc}</div>
       <div class="rfoot">
