@@ -1708,7 +1708,38 @@ document.getElementById('chat-overlay').addEventListener('click', (e)=>{
   }
 });
 
-// 관리자 인증 (기존 비번 동일)
+// 관리자 인증
+const _AH = '770edc022cc8394fec2f3771f3d9122da9b455e060ec65616f00142870f1df89';
+async function _hpw(p){
+  const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(p));
+  return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+async function checkAdminPw(){
+  const pw = document.getElementById('admin-pw-input').value;
+  const h = await _hpw(pw);
+  if(h === _AH){
+    document.getElementById('admin-pw-modal').classList.remove('on');
+    window._chatAdminMode = false;
+    isChatAdmin = true;
+    document.getElementById('chat-admin-btn').classList.add('on');
+    document.getElementById('chat-admin-btn').textContent = '✅ 관리자 ON';
+    renderChatList(window._lastChatSnap);
+    showToast('✅ 관리자 모드 활성화!');
+  } else {
+    window._chatAdminMode = false;
+    showToast('❌ 비밀번호가 틀렸어요!');
+    document.getElementById('admin-pw-input').value = '';
+    document.getElementById('admin-pw-input').focus();
+  }
+}
+document.getElementById('admin-pw-cancel').addEventListener('click', ()=>{
+  document.getElementById('admin-pw-modal').classList.remove('on');
+});
+document.getElementById('admin-pw-ok').addEventListener('click', checkAdminPw);
+document.getElementById('admin-pw-input').addEventListener('keydown', e=>{
+  if(e.key==='Enter') checkAdminPw();
+});
+
 document.getElementById('chat-admin-btn').addEventListener('click', ()=>{
   if(isChatAdmin){
     isChatAdmin = false;
